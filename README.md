@@ -1,4 +1,3 @@
-
 <h1>
   <a href="http://node-machine.org" title="Node-Machine public registry"><img alt="node-machine logo" title="Node-Machine Project" src="http://node-machine.org/images/machine-anthropomorph-for-white-bg.png" width="50" /></a>
   machinepack-mysql
@@ -9,7 +8,7 @@
 Structured Node.js bindings for MySql.
 
 
-## Installation &nbsp; [![NPM version](https://badge.fury.io/js/machinepack-mysql.svg)](http://badge.fury.io/js/machinepack-mysql) [![Build Status](https://travis-ci.org/mikermcneil/machinepack-mysql.png?branch=master)](https://travis-ci.org/mikermcneil/machinepack-mysql)
+## Installation &nbsp; [![NPM version](https://badge.fury.io/js/machinepack-mysql.svg)](http://badge.fury.io/js/machinepack-mysql) [![Build Status](https://travis-ci.org/particlebanana/machinepack-mysql.png?branch=master)](https://travis-ci.org/particlebanana/machinepack-mysql)
 
 ```sh
 $ npm install machinepack-mysql
@@ -27,5 +26,5 @@ Learn more at <a href="http://node-machine.org/implementing/FAQ" title="Machine 
 
 ## License
 
-MIT &copy; 2015 contributors
+MIT &copy; 2015 Cody Stoltman, Mike McNeil, Scott Gress
 

@@ -28,6 +28,11 @@
       "list-tables",
       "describe-table",
       "list-records"
-    ]
+    ],
+    "testsUrl": "https://travis-ci.org/particlebanana/machinepack-mysql"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:particlebanana/machinepack-mysql.git"
   }
 }

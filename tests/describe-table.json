@@ -1,0 +1,10 @@
+{
+  "machine": "describe-table",
+  "expectations": [
+    {
+      "todo": true,
+      "using": {},
+      "outcome": "success"
+    }
+  ]
+}
