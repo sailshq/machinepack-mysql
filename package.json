@@ -1,6 +1,6 @@
 {
   "name": "machinepack-mysql",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Structured Node.js bindings for MySql.",
   "scripts": {
     "test": "node ./node_modules/test-machinepack-mocha/bin/testmachinepack-mocha.js"
