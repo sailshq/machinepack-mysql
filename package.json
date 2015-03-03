@@ -27,7 +27,8 @@
     "machines": [
       "list-tables",
       "describe-table",
-      "list-records"
+      "list-records",
+      "count-records"
     ],
     "testsUrl": "https://travis-ci.org/particlebanana/machinepack-mysql"
   },
