@@ -43,7 +43,7 @@ module.exports = {
 
     sort: {
       description: 'If specified, the rows coming back from the query will be sorted according to this dictionary.',
-      typeclass: 'dictionary'
+      typeclass: 'array'
     },
 
     schema: {
@@ -126,7 +126,14 @@ module.exports = {
 
     if(inputs.limit) query.limit = inputs.limit;
     if(inputs.skip) query.skip = inputs.skip;
-    if(inputs.sort) query.sort = inputs.sort;
+    if(inputs.sort) {
+      query.sort = {};
+
+      // Parse array and turn into a WL sort criteria
+      inputs.sort.forEach(function(sorter) {
+        query.sort[sorter.columnName] = sorter.direction;
+      });
+    }
 
 
     // WL SQL options
