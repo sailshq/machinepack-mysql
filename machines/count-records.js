@@ -4,7 +4,7 @@ module.exports = {
   friendlyName: 'Count records',
 
 
-  description: 'Count records in the Postgresql table that match the specified criteria.',
+  description: 'Count records in the MySQL table that match the specified criteria.',
 
 
   extendedDescription: '',
