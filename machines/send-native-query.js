@@ -216,7 +216,6 @@ module.exports = {
       // If the first argument is truthy, then treat it as an error.
       // (i.e. close shop early &gtfo; via the `queryFailed` exit)
       if ( arguments[0] ) {
-        console.log('\n\nALL:\n',util.inspect(arguments, {depth:null}));
         return exits.queryFailed({
           error: arguments[0]
         });
