@@ -45,12 +45,6 @@ module.exports = {
       return exits.badConnection();
     }
 
-    // TODO: provide mechanism to kill pool via `meta`.
-    // For more info, see:
-    //  • https://github.com/felixge/node-mysql/blob/v2.10.2/Readme.md#closing-all-the-connections-in-a-pool
-    // pool.end(function (err) {
-      // all connections in the pool have ended
-    // });
 
     // Release connection.
     try {
