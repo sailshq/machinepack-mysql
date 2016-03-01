@@ -10,6 +10,9 @@ module.exports = {
   extendedDescription: 'The provided connection must already have a transaction begun on it.',
 
 
+  moreInfoUrl: 'http://dev.mysql.com/doc/refman/5.7/en/commit.html',
+
+
   inputs: {
 
     connection:
@@ -40,14 +43,10 @@ module.exports = {
 
 
   fn: function (inputs, exits) {
-    var util = require('util');
     var Pack = require('../');
 
-    // Validate provided connection.
-    if ( !util.isObject(inputs.connection) || !util.isFunction(inputs.connection.release) || !util.isObject(inputs.connection.client) ) {
-      return exits.badConnection();
-    }
-
+    // Since we're using `sendNativeQuery()` to access the underlying connection,
+    // we have confidence it will be validated before being used.
     Pack.sendNativeQuery({
       connection: inputs.connection,
       query: {
@@ -57,6 +56,9 @@ module.exports = {
     }).exec({
       error: function error(err) {
         return exits.error(err);
+      },
+      badConnection: function badConnection(report){
+        return exits.badConnection(report);
       },
       success: function success() {
         return exits.success();

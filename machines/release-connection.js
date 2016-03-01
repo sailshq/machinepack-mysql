@@ -38,21 +38,30 @@ module.exports = {
 
   fn: function (inputs, exits) {
     var util = require('util');
+    var validateConnection = require('../helpers/validate-connection');
 
     // Validate provided connection.
-    if ( !util.isObject(inputs.connection) || !util.isFunction(inputs.connection.release) || !util.isObject(inputs.connection.client) ) {
+    if ( !validateConnection({ connection: inputs.connection }).execSync() ) {
       return exits.badConnection();
     }
 
     // Release connection.
-    try {
-      inputs.connection.release();
-    }
-    catch (e) {
-      return exits.error(e);
-    }
+    inputs.connection.end(function(err) {
+      if (err) {
+        // If the connection cannot be released gracefully, try to force it.
+        try {
+          inputs.connection.destroy();
+          console.warn('Could not release MySQL connection gracefully, but connection was forcibly destroyed.  Details:\n=== === ===\n'+err.stack);
+          return exits.success();
+        }
+        catch (e) {
+          return exits.error(new Error('Could not release MySQL connection gracefully, and attempting to forcibly destroy the connection threw an error.  Details:\n=== === ===\n'+e.stack+'\n\nAnd error details from the original graceful attempt:\n=== === ===\n'+err.stack));
+        }
+      }
 
-    return exits.success();
+      return exits.success();
+    });
+
   }
 
 

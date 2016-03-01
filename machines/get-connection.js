@@ -4,7 +4,7 @@ module.exports = {
   friendlyName: 'Get connection',
 
 
-  description: 'Get an active connection to the MySQL database from the pool.',
+  description: 'Get an active connection to a MySQL database from the pool.',
 
 
   inputs: {
@@ -12,8 +12,11 @@ module.exports = {
     connectionString: {
       description: 'A connection string to use to connect to a MySQL database.',
       extendedDescription: 'Be sure to include credentials and the name of an existing database on your MySQL server.',
-      moreInfoUrl: '***TODO***',// TODO
-      example: 'mysql://localhost:5432/myproject',
+      moreInfoUrl: 'https://gist.github.com/mikermcneil/46d10fd816c980cd3d9f',
+      whereToGet: {
+        url: 'https://gist.github.com/mikermcneil/46d10fd816c980cd3d9f'
+      },
+      example: 'mysql://mikermcneil:p4ssw042D@localhost:3306/some_db',
       required: true
     },
 
@@ -21,8 +24,7 @@ module.exports = {
       friendlyName: 'Meta (custom)',
       description: 'Additional MySQL-specific options to use when connecting.',
       extendedDescription: 'If specified, should be a dictionary. If there is a conflict between something provided in the connection string, and something in `meta`, the connection string takes priority.',
-      // TODO
-      // moreInfoUrl: 'https://github.com/brianc/node-postgres/wiki/Client#new-clientobject-config--client',
+      moreInfoUrl: 'https://gist.github.com/mikermcneil/46d10fd816c980cd3d9f',
       example: '==='
     }
 
@@ -76,18 +78,19 @@ module.exports = {
   fn: function (inputs, exits) {
     var util = require('util');
     var Url = require('url');
-    var pg = require('pg');
+    var felix = require('mysql');
 
 
-
-    // Build a local variable (`mysqlClientConfig`) to house a dictionary
+    // Build a local variable (`_mysqlClientConfig`) to house a dictionary
     // of additional MySQL connection options that will be passed into `.connect()`.
     // (this is pulled from the `connectionString` and `meta` inputs, and used for
-    //  configuring stuff like `host` and `ssl`)
+    //  configuring stuff like `host` and `password`)
     //
     // For a complete list of available options, see:
-    //  • TODO
-    var mysqlClientConfig = {};
+    //  • https://github.com/felixge/node-mysql#connection-options
+    //
+    // However, note that these options are whitelisted below.
+    var _mysqlClientConfig = {};
 
 
 
@@ -99,9 +102,18 @@ module.exports = {
 
       // Use properties of `meta` directly as MySQL client config.
       // (note that we're very careful to only stick a property on the client config if it was not undefined)
-      ['host', 'port', 'database', 'user', 'password', 'ssl', 'application_name', 'fallback_application_name'].forEach(function (pgClientConfKeyName){
-        if ( !util.isUndefined(inputs.meta[pgClientConfKeyName]) ) {
-          mysqlClientConfig[pgClientConfKeyName] = inputs.meta[pgClientConfKeyName];
+      [
+        // Basic:
+        'host', 'port', 'database', 'user', 'password',
+        'charset', 'timezone', 'ssl',
+
+        // Advanced:
+        'connectTimeout', 'stringifyObjects', 'insecureAuth', 'typeCast',
+        'queryFormat', 'supportBigNumbers', 'bigNumberStrings', 'dateStrings',
+        'debug', 'trace', 'multipleStatements', 'flags',
+      ].forEach(function (mysqlClientConfKeyName){
+        if ( !util.isUndefined(inputs.meta[mysqlClientConfKeyName]) ) {
+          _mysqlClientConfig[mysqlClientConfKeyName] = inputs.meta[mysqlClientConfKeyName];
         }
       });
     }
@@ -116,101 +128,63 @@ module.exports = {
 
       // Validate that a protocol was found before other pieces
       // (otherwise other parsed info will be very weird and wrong)
-      if (!parsedConnectionStr.protocol) {
+      if ( !parsedConnectionStr.protocol ) {
         throw new Error('Protocol (i.e. `mysql://`) is required in connection string.');
       }
 
       // Parse port & host
-      if (parsedConnectionStr.port) { mysqlClientConfig.port = +parsedConnectionStr.port; }
-      else { mysqlClientConfig.port = 5432; }
-      if (parsedConnectionStr.hostname) { mysqlClientConfig.host = parsedConnectionStr.hostname; }
-      else { mysqlClientConfig.host = 'localhost'; }
+      var DEFAULT_HOST = 'localhost';
+      var DEFAULT_PORT = 3306;
+      if (parsedConnectionStr.port) { _mysqlClientConfig.port = +parsedConnectionStr.port; }
+      else { _mysqlClientConfig.port = DEFAULT_PORT; }
+      if (parsedConnectionStr.hostname) { _mysqlClientConfig.host = parsedConnectionStr.hostname; }
+      else { _mysqlClientConfig.host = DEFAULT_HOST; }
 
       // Parse user & password
       if ( parsedConnectionStr.auth && util.isString(parsedConnectionStr.auth) ) {
         var authPieces = parsedConnectionStr.auth.split(/:/);
         if (authPieces[0]) {
-          mysqlClientConfig.user = authPieces[0];
+          _mysqlClientConfig.user = authPieces[0];
         }
         if (authPieces[1]) {
-          mysqlClientConfig.password = authPieces[1];
+          _mysqlClientConfig.password = authPieces[1];
         }
       }
 
       // Parse database name
       if (util.isString(parsedConnectionStr.pathname) ) {
-        var databaseName = parsedConnectionStr.pathname;
+        var _databaseName = parsedConnectionStr.pathname;
         // Trim leading and trailing slashes
-        databaseName = databaseName.replace(/^\/+/, '');
-        databaseName = databaseName.replace(/\/+$/, '');
+        _databaseName = _databaseName.replace(/^\/+/, '');
+        _databaseName = _databaseName.replace(/\/+$/, '');
         // If anything is left, use it as the database name.
-        if ( parsedConnectionStr.pathname ) {
-          mysqlClientConfig.database = parsedConnectionStr.pathname;
+        if ( _databaseName ) {
+          _mysqlClientConfig.database = _databaseName;
         }
       }
     }
-    catch (e) {
-      e.message =
-      'Provided value (`'+inputs.connectionString+'`) is not a valid MySQL connection string: '+
-      e.message;
+    catch (_e) {
+      _e.message = util.format('Provided value (`%s`) is not a valid MySQL connection string.',inputs.connectionString) + ' Error details: '+ _e.message;
       return exits.malformed({
-        error: e
+        error: _e
       });
     }
 
 
-    // pg.connect(inputs.connectionString, function afterConnected(err, client, done) {
-    pg.connect(mysqlClientConfig, function afterConnected(err, client, done) {
-      // If an error occurs,
-      if (err) {
-        // Ensure the connection is actually dead
-        // (probably unnecessary but doesn't hurt-- see https://github.com/brianc/node-postgres/issues/465#issuecomment-28735745)
-        try { done(); } catch (e) {}
-
-        // Then bail w/ `failedToConnect` error.
+    var _connection = felix.createConnection(_mysqlClientConfig);
+    _connection.connect(function afterConnected(_err) {
+      if (_err) {
         return exits.failedToConnect({
-          error: err
+          error: _err
         });
       }
 
-      // Bind "error" handler to prevent crashing the process if the database server crashes.
-      // See https://github.com/mikermcneil/waterline-query-builder/blob/master/docs/errors.md#when-a-connection-is-interrupted
-      client.on('error', function (err){
-        console.warn('Warning: Connection to MySQL database was lost. Did the database server go offline?');
-        if (err) { console.warn('Error details:',err); }
-        // If this gets annoying (since it's almost always accompanied by the other warning below)
-        // then we could remove the per-connection warning and make it silent for now.
-
-        // To test re: performance: should we call `done()` here?
-      });
-
-      // We must also bind a handler to the module global (`pg`) in order to handle
-      // errors on the other connections live in the pool.
-      // See https://github.com/brianc/node-postgres/issues/465#issuecomment-28674266
-      // for more information.
-      //
-      // However we only bind this event handler once-- no need to bind it again and again
-      // every time a new connection is acquired. For this, we use `pg._ALREADY_BOUND_ERROR_HANDLER_FOR_POOL_IN_THIS_PROCESS`.
-      if (!pg._ALREADY_BOUND_ERROR_HANDLER_FOR_POOL_IN_THIS_PROCESS) {
-        pg._ALREADY_BOUND_ERROR_HANDLER_FOR_POOL_IN_THIS_PROCESS = true;
-        pg.on('error', function (err){
-          // For now, we log a warning when this happens.
-          console.warn('Warning: One or more pooled connections to MySQL database were lost. Did the database server go offline?');
-          if (err) { console.warn('Error details:',err); }
-        });
-      }
-
-      // Build the "connection" and pass it back.
-      // This will be passed in to other methods in this driver.
-      var connection = {
-        client: client,
-        release: done
-      };
-
+      // Now pass back the connection so it can be provided
+      // to other methods in this driver.
       return exits.success({
-        connection: connection
+        connection: _connection
       });
-    });//</pg.connect()>
+    });//</_connection.connect()>
   }
 
 
