@@ -171,7 +171,29 @@ module.exports = {
     }
 
 
+    // Create the MySQL connection instance.
     var _connection = felix.createConnection(_mysqlClientConfig);
+
+    //====================================================================================================
+    // Without any further protection, if the MySQL connection dies then
+    // the process will crash with the following error:
+    //====================================================================================================
+    //     events.js:141
+    //       throw er; // Unhandled 'error' event
+    //       ^
+    //
+    // Error: Connection lost: The server closed the connection.
+    //     at Protocol.end (/Users/mikermcneil/code/machinepack-mysql/node_modules/mysql/lib/protocol/Protocol.js:109:13)
+    //     at Socket.<anonymous> (/Users/mikermcneil/code/machinepack-mysql/node_modules/mysql/lib/Connection.js:102:28)
+    //     at emitNone (events.js:72:20)
+    //     at Socket.emit (events.js:166:7)
+    //     at endReadableNT (_stream_readable.js:905:12)
+    //     at nextTickCallbackWith2Args (node.js:441:9)
+    //     at process._tickCallback (node.js:355:17)
+    //====================================================================================================
+
+
+    // Now connect the instance.
     _connection.connect(function afterConnected(_err) {
       if (_err) {
         return exits.failedToConnect({

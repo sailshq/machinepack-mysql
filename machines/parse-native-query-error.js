@@ -18,7 +18,6 @@ module.exports = {
     queryType: {
       description: 'The type of query operation this raw error came from.',
       extendedDescription: 'Either "select", "insert", "delete", or "update".  This determines how the provided raw error will be parsed/coerced.',
-      moreInfoUrl: 'https://github.com/particlebanana/waterline-query-builder/blob/master/docs/syntax.md',
       required: true,
       example: 'select',// (select|insert|delete|update)
     },

@@ -61,14 +61,15 @@ module.exports = {
     // Validate query
     // (supports raw SQL string or dictionary consisting of `sql` and `bindings` properties)
     var sql;
-    var bindings;
+    var bindings = [];
     if ( util.isString(inputs.nativeQuery) ) {
       sql = inputs.nativeQuery;
-      bindings = [];
     }
-    else if ( util.isObject(inputs.nativeQuery) && util.isString(inputs.nativeQuery.sql) && util.isArray(inputs.nativeQuery.bindings) ) {
+    else if ( util.isObject(inputs.nativeQuery) && util.isString(inputs.nativeQuery.sql) ) {
       sql = inputs.nativeQuery.sql;
-      bindings = inputs.nativeQuery.bindings;
+      if ( util.isArray(inputs.nativeQuery.bindings) ) {
+        bindings = inputs.nativeQuery.bindings;
+      }
     }
     else {
       return exits.error(new Error('Provided `nativeQuery` is invalid.  Please specify either a string of raw SQL or a dictionary like `{sql: \'SELECT * FROM dogs WHERE name = $1\', bindings: [\'Rover\']}`.'));
@@ -91,6 +92,115 @@ module.exports = {
       //  • https://github.com/felixge/node-mysql/blob/d4a5fd7b5e92a1e09bf3c85d24265eada8a84ad8/lib/protocol/sequences/Sequence.js#L96
       //  • https://github.com/felixge/node-mysql/blob/1720920f7afc660d37430c35c7128b20f77735e3/lib/protocol/sequences/Query.js#L94
       //  • https://github.com/felixge/node-mysql/blob/1720920f7afc660d37430c35c7128b20f77735e3/lib/protocol/sequences/Query.js#L144
+      //
+      // For example, here are the raw arguments provided to the `.query()`
+      // callback for different types of queries:
+      // ====================================================================
+      // * * * * * *
+      // CREATE TABLE
+      // * * * * * *
+      // ```
+      // null,
+      // {         // an OkPacket instance
+      //   fieldCount: 0,
+      //   affectedRows: 0,
+      //   insertId: 0,
+      //   serverStatus: 2,
+      //   warningCount: 0,
+      //   message: '',
+      //   protocol41: true,
+      //   changedRows: 0
+      // },
+      // undefined
+      // ```
+      //
+      // * * * * * *
+      // SELECT
+      // * * * * * *
+      // ```
+      // null,
+      // [        // an array of `RowDataPacket` instances:
+      //   {
+      //     id: 1,
+      //     CustomerName: 'Cardinal',
+      //     ...
+      //   },
+      //   ...
+      // ],
+      // [        // an array of `FieldPacket` instances:
+      //   {
+      //     catalog: 'def',
+      //     db: 'mikermcneil',
+      //     table: 'some_table',
+      //     orgTable: 'some_table',
+      //     name: 'id',
+      //     orgName: 'id',
+      //     charsetNr: 33,
+      //     length: 765,
+      //     type: 253,
+      //     flags: 20483,
+      //     decimals: 0,
+      //     default: undefined,
+      //     zeroFill: false,
+      //     protocol41: true
+      //   },
+      //   ...
+      // ]
+      // ```
+      //
+      // * * * * * *
+      // INSERT
+      // * * * * * *
+      // ```
+      // null,
+      // {             // an OkPacket instance
+      //   fieldCount: 0,
+      //   affectedRows: 1,
+      //   insertId: 1,
+      //   serverStatus: 2,
+      //   warningCount: 0,
+      //   message: '',
+      //   protocol41: true,
+      //   changedRows: 0
+      // },
+      // undefined
+      // ```
+      //
+      // * * * * * *
+      // DELETE
+      // * * * * * *
+      // ```
+      // null,
+      // {         // an OkPacket instance
+      //   fieldCount: 0,
+      //   affectedRows: 1,
+      //   insertId: 0,
+      //   serverStatus: 34,
+      //   warningCount: 0,
+      //   message: '',
+      //   protocol41: true,
+      //   changedRows: 0
+      // },
+      // undefined
+      // ```
+      // * * * * * *
+      // UPDATE
+      // * * * * * *
+      // ```
+      // null,
+      // {         // an OkPacket instance
+      //   fieldCount: 0,
+      //   affectedRows: 1,
+      //   insertId: 0,
+      //   serverStatus: 34,
+      //   warningCount: 0,
+      //   message: '(Rows matched: 1  Changed: 1  Warnings: 0',
+      //   protocol41: true,
+      //   changedRows: 1
+      // },
+      // undefined
+      // ```
+      // ====================================================================
 
 
       // If the first argument is truthy, then treat it as an error.
@@ -100,43 +210,49 @@ module.exports = {
       }
 
 
-      // CREATE TABLE query:
-      // { result:
-      //  { rows:
-      //     { fieldCount: 0,
-      //       affectedRows: 0,
-      //       insertId: 0,
-      //       serverStatus: 2,
-      //       warningCount: 0,
-      //       message: '',
-      //       protocol41: true,
-      //       changedRows: 0 } },
-      // meta: { rawArguments: { '0': null, '1': [Object], '2': undefined } } }
+      // Otherwise, the query was successful.
 
-
-      // SELECT query:
-      // { result: { rows: [], fields: [ [Object] ] },
-      // meta: { rawArguments: { '0': null, '1': [], '2': [Object] } } }
-
-      // Otherwise, we assume the query was successful and return.
-      return exits.success({
-        // Since the arguments passed to this callback and their data format
-        // can vary across different types of queries, we do our best to normalize that
-        // here.  However, in order to do so, we have to be somewhat opinionated;
-        // d.g. even though these aren't always accurate labels, we send the second
-        // argument through as the `rows` property, and the third argument as the
-        // `fields` property.
-        result: {
-          rows: arguments[1],
-          fields: arguments[2]
-        },
-        // For flexibility, an unadulterated reference to this callback's
-        // arguments object is also exposed as `meta.rawArguments`.
-        meta: {
-          rawArguments: arguments
+      // Since the arguments passed to this callback and their data format
+      // can vary across different types of queries, we do our best to normalize
+      // that here.  However, in order to do so, we have to be somewhat
+      // opinionated; i.e. using the following heuristics when building the
+      // standard `result` dictionary:
+      //  • If the 2nd arg is an array, we expose it as `result.rows`.
+      //  • Otherwise if the 2nd arg is a dictionary, we expose it as `result`.
+      //  • If the 3rd arg is an array, we include it as `result.fields`.
+      //    (if the 3rd arg is an array AND the 2nd arg is a dictionary, then
+      //     the 3rd arg is tacked on as the `fields` property of the 2nd arg.
+      //     If the 2nd arg already had `fields`, it is overridden.)
+      var normalizedNativeResult;
+      if ( arguments[1] ) {
+        // `result :=`
+        // `result.rows :=`
+        if ( util.isArray(arguments[1]) ) {
+          normalizedNativeResult = { rows: arguments[1] };
         }
+        // `result :=`
+        else if ( util.isObject(arguments[1]) ) {
+          normalizedNativeResult = arguments[1];
+        }
+        else { return exits.error(new Error('Query was successful, but output from node-mysql is in an unrecognized format.  Output:\n'+util.inspect(Array.prototype.slice.call(arguments), {depth: null}))); }
+      }
+      if ( arguments[2] ) {
+        // `result.fields :=`
+        if ( util.isArray(arguments[2]) ) {
+          normalizedNativeResult.fields = arguments[2];
+        }
+        else { return exits.error(new Error('Query was successful, but output from node-mysql is in an unrecognized format.  Output:\n'+util.inspect(Array.prototype.slice.call(arguments), {depth: null}))); }
+      }
+
+      // Finally, return the normalized result.
+      //
+      // For flexibility, an unadulterated reference to this callback's
+      // arguments object is also exposed as `meta.rawArguments`.
+      return exits.success({
+        result: normalizedNativeResult,
+        meta: { rawArguments: arguments }
       });
-    });
+    });//</callback from sending native query via node-mysql>
   }
 
 
