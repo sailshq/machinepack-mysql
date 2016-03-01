@@ -111,6 +111,10 @@ module.exports = {
         'connectTimeout', 'stringifyObjects', 'insecureAuth', 'typeCast',
         'queryFormat', 'supportBigNumbers', 'bigNumberStrings', 'dateStrings',
         'debug', 'trace', 'multipleStatements', 'flags',
+
+        // Pool-specific:
+        'acquireTimeout', 'waitForConnections', 'connectionLimit', 'queueLimit',
+
       ].forEach(function (mysqlClientConfKeyName){
         if ( !util.isUndefined(inputs.meta[mysqlClientConfKeyName]) ) {
           _mysqlClientConfig[mysqlClientConfKeyName] = inputs.meta[mysqlClientConfKeyName];
@@ -171,78 +175,52 @@ module.exports = {
     }
 
 
-    // Create the MySQL connection instance.
-    var _connection = felix.createConnection(_mysqlClientConfig);
+    // Note:
+    // Support for "PoolCluster" (https://github.com/felixge/node-mysql/blob/v2.10.2/Readme.md#poolcluster)
+    // is not built in to the Waterline driver spec, but it could be instrumented
+    // using `meta`.
 
 
-    // TODO: pool
-    // var pool  = mysql.createPool({
-    //   connectionLimit : 10,
-    //   host            : 'example.org',
-    //   user            : 'bob',
-    //   password        : 'secret'
-    // });
+    // Ensure a pool exists-- and if not, get one started.
+    if ( !felix._waterlinePool ) {
+
+      // For consistency with other drivers (`pg` in particular),
+      // the pool is stored as a process-global and can only be
+      // destroyed by sending in an extra special, non-standard
+      // option when calling `releaseConnection()`.
+      //
+      // It is not currently possible to create more than one pool
+      // using the vanilla Waterline driver spec alone. However, this
+      // can definitely be instrumented for MySQL in particular
+      // by using `meta`.
+      //
+      // More about using pools with node-mysql:
+      //  • https://github.com/felixge/node-mysql#pooling-connections
+      felix._waterlinePool = felix.createPool(_mysqlClientConfig);
 
 
-    // Now handle fatal connection errors that occur via `error` events.
-    //
-    // Otherwise, without any further protection, if the MySQL connection
-    // dies then the process will crash with the following error:
-    //====================================================================================================
-    //     events.js:141
-    //       throw er; // Unhandled 'error' event
-    //       ^
-    //
-    // Error: Connection lost: The server closed the connection.
-    //     at Protocol.end (/Users/mikermcneil/code/machinepack-mysql/node_modules/mysql/lib/protocol/Protocol.js:109:13)
-    //     at Socket.<anonymous> (/Users/mikermcneil/code/machinepack-mysql/node_modules/mysql/lib/Connection.js:102:28)
-    //     at emitNone (events.js:72:20)
-    //     at Socket.emit (events.js:166:7)
-    //     at endReadableNT (_stream_readable.js:905:12)
-    //     at nextTickCallbackWith2Args (node.js:441:9)
-    //     at process._tickCallback (node.js:355:17)
-    //====================================================================================================
-    //
-    // For more background, see:
-    //  • https://github.com/felixge/node-mysql#error-handling
-    //  • https://github.com/mikermcneil/waterline-query-builder/blob/master/docs/errors.md#when-a-connection-is-interrupted
-    //
-
-
-    // Bind "error" handler to prevent crashing the process if the Node.js server loses
-    // connectivity to the MySQL server.  This usually means that the connection
-    // timed out or ran into a fatal error; or perhaps that the database went
-    // offline or crashed.
-    connection.on('error', function(err) {
-      console.warn('Warning: Connection to MySQL database was lost. Did the database server go offline?');
-      if (err) { console.warn('Error details:',err); }
-      // err.code === 'ER_BAD_DB_ERROR'
-    });
-
-    // TODO: handle for pool
-    // e.g.::::::
-    //
-    // // We must also bind a handler to the module global (`pg`) in order to handle
-    // // errors on the other connections live in the pool.
-    // // See https://github.com/brianc/node-postgres/issues/465#issuecomment-28674266
-    // // for more information.
-    // //
-    // // However we only bind this event handler once-- no need to bind it again and again
-    // // every time a new connection is acquired. For this, we use `pg._ALREADY_BOUND_ERROR_HANDLER_FOR_POOL_IN_THIS_PROCESS`.
-    // if (!pg._ALREADY_BOUND_ERROR_HANDLER_FOR_POOL_IN_THIS_PROCESS) {
-    //   pg._ALREADY_BOUND_ERROR_HANDLER_FOR_POOL_IN_THIS_PROCESS = true;
-    //   pg.on('error', function (err){
-    //     // For now, we log a warning when this happens.
-    //     console.warn('Warning: One or more pooled connections to PostgreSQL database were lost. Did the database server go offline?');
-    //     if (err) { console.warn('Error details:',err); }
-    //   });
-    // }
+      // The first time we build this pool, we must also bind an "error" handler
+      // to the pool itself in order to handle errors from connections in the
+      // pool, or from the pool itself.
+      //
+      // Otherwise, without any further protection, if the MySQL connection
+      // dies then the process will crash with an error.
+      //
+      // For more background, see:
+      //  • https://github.com/felixge/node-mysql/blob/v2.10.2/Readme.md#error-handling
+      //
+      // Note that we only bind this event handler once per pool.
+      felix._waterlinePool.on('error', function (err){
+        // If something goes wrong in this pool, log a warning.
+        console.warn('Warning: One or more pooled connections to MySQL database were lost. Did the database server go offline?');
+        if (err) { console.warn('Error details:',err); }
+      });
+    }
 
 
 
-
-    // Now connect the instance.
-    _connection.connect(function afterConnected(_err) {
+    // Acquire a connection from the pool.
+    felix._waterlinePool.getConnection(function afterConnected(_err, _connection) {
       if (_err) {
         return exits.failedToConnect({
           error: _err
@@ -252,9 +230,18 @@ module.exports = {
       // Now pass back the connection so it can be provided
       // to other methods in this driver.
       return exits.success({
-        connection: _connection
+        connection: _connection,
+        meta: {
+          // Note that we also include a reference to the pool
+          // (it's accessible globally as well-- see above--
+          //  this is just to make it easier to get a hold of
+          //  without having to poke around the source code of
+          //  this driver)
+          pool: felix._waterlinePool
+        }
       });
-    });//</_connection.connect()>
+
+    });//</pool.getConnection()>
   }
 
 

@@ -48,8 +48,13 @@ module.exports = require('machine').build({
     return exits.success(
       util.isObject(inputs.connection) &&
       util.isFunction(inputs.connection.query) &&
-      util.isFunction(inputs.connection.end) &&
-      util.isFunction(inputs.connection.destroy)
+      util.isFunction(inputs.connection.destroy) &&
+      (
+        // • If you are pooling: `.release()`
+        util.isFunction(inputs.connection.release) ||
+        // • AND/OR if you are not pooling: `.end()`
+        util.isFunction(inputs.connection.end)
+      )
     );
   }
 

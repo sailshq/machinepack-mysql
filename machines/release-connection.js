@@ -45,22 +45,35 @@ module.exports = {
       return exits.badConnection();
     }
 
+    // TODO: provide mechanism to kill pool via `meta`.
+    // For more info, see:
+    //  • https://github.com/felixge/node-mysql/blob/v2.10.2/Readme.md#closing-all-the-connections-in-a-pool
+    // pool.end(function (err) {
+      // all connections in the pool have ended
+    // });
+
     // Release connection.
-    inputs.connection.end(function(err) {
-      if (err) {
-        // If the connection cannot be released gracefully, try to force it.
-        try {
-          inputs.connection.destroy();
-          console.warn('Could not release MySQL connection gracefully, but connection was forcibly destroyed.  Details:\n=== === ===\n'+err.stack);
-          return exits.success();
-        }
-        catch (e) {
-          return exits.error(new Error('Could not release MySQL connection gracefully, and attempting to forcibly destroy the connection threw an error.  Details:\n=== === ===\n'+e.stack+'\n\nAnd error details from the original graceful attempt:\n=== === ===\n'+err.stack));
-        }
+    try {
+      inputs.connection.release();
+    }
+    catch (_releaseErr) {
+      // If the connection cannot be released back to the pool gracefully,
+      // try to force it to disconnect.
+      try {
+        inputs.connection.destroy();
+      }
+      // If even THAT fails, exit via `error`.
+      catch (_destroyErr) {
+        return exits.error(new Error('Could not release MySQL connection gracefully, and attempting to forcibly destroy the connection threw an error.  Details:\n=== === ===\n'+_destroyErr.stack+'\n\nAnd error details from the original graceful attempt:\n=== === ===\n'+_releaseErr.stack));
       }
 
+      // Otherwise, forcing a disconnect worked:
+      console.warn('Could not release MySQL connection gracefully, but connection was forcibly destroyed.  Details:\n=== === ===\n'+_releaseErr.stack);
       return exits.success();
-    });
+    }
+
+    // If we made it here, releasing the connection gracefully must have worked.
+    return exits.success();
 
   }
 
