@@ -42,6 +42,16 @@ module.exports = {
       }
     },
 
+    queryFailed: {
+      description: 'The database returned an error when attempting to execute the native query.',
+      outputVariableName: 'report',
+      outputDescription: 'The `error` property is a JavaScript Error instance with more details about what went wrong.  The `meta` property is reserved for custom driver-specific extensions.',
+      example: {
+        error: '===',
+        meta: '==='
+      }
+    },
+
     badConnection:
       require('../constants/badConnection.exit')
 
@@ -204,9 +214,11 @@ module.exports = {
 
 
       // If the first argument is truthy, then treat it as an error.
-      // (i.e. bail via the `error` exit)
-      if (arguments[0]) {
-        return exits.error( arguments[0] );
+      // (i.e. close shop early &gtfo; via the `queryFailed` exit)
+      if ( arguments[0] ) {
+        return exits.queryFailed({
+          error: arguments[0]
+        });
       }
 
 
