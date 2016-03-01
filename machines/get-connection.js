@@ -174,9 +174,20 @@ module.exports = {
     // Create the MySQL connection instance.
     var _connection = felix.createConnection(_mysqlClientConfig);
 
-    //====================================================================================================
-    // Without any further protection, if the MySQL connection dies then
-    // the process will crash with the following error:
+
+    // TODO: pool
+    // var pool  = mysql.createPool({
+    //   connectionLimit : 10,
+    //   host            : 'example.org',
+    //   user            : 'bob',
+    //   password        : 'secret'
+    // });
+
+
+    // Now handle fatal connection errors that occur via `error` events.
+    //
+    // Otherwise, without any further protection, if the MySQL connection
+    // dies then the process will crash with the following error:
     //====================================================================================================
     //     events.js:141
     //       throw er; // Unhandled 'error' event
@@ -191,6 +202,43 @@ module.exports = {
     //     at nextTickCallbackWith2Args (node.js:441:9)
     //     at process._tickCallback (node.js:355:17)
     //====================================================================================================
+    //
+    // For more background, see:
+    //  • https://github.com/felixge/node-mysql#error-handling
+    //  • https://github.com/mikermcneil/waterline-query-builder/blob/master/docs/errors.md#when-a-connection-is-interrupted
+    //
+
+
+    // Bind "error" handler to prevent crashing the process if the Node.js server loses
+    // connectivity to the MySQL server.  This usually means that the connection
+    // timed out or ran into a fatal error; or perhaps that the database went
+    // offline or crashed.
+    connection.on('error', function(err) {
+      console.warn('Warning: Connection to MySQL database was lost. Did the database server go offline?');
+      if (err) { console.warn('Error details:',err); }
+      // err.code === 'ER_BAD_DB_ERROR'
+    });
+
+    // TODO: handle for pool
+    // e.g.::::::
+    //
+    // // We must also bind a handler to the module global (`pg`) in order to handle
+    // // errors on the other connections live in the pool.
+    // // See https://github.com/brianc/node-postgres/issues/465#issuecomment-28674266
+    // // for more information.
+    // //
+    // // However we only bind this event handler once-- no need to bind it again and again
+    // // every time a new connection is acquired. For this, we use `pg._ALREADY_BOUND_ERROR_HANDLER_FOR_POOL_IN_THIS_PROCESS`.
+    // if (!pg._ALREADY_BOUND_ERROR_HANDLER_FOR_POOL_IN_THIS_PROCESS) {
+    //   pg._ALREADY_BOUND_ERROR_HANDLER_FOR_POOL_IN_THIS_PROCESS = true;
+    //   pg.on('error', function (err){
+    //     // For now, we log a warning when this happens.
+    //     console.warn('Warning: One or more pooled connections to PostgreSQL database were lost. Did the database server go offline?');
+    //     if (err) { console.warn('Error details:',err); }
+    //   });
+    // }
+
+
 
 
     // Now connect the instance.
