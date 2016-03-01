@@ -11,12 +11,12 @@ module.exports = {
 
     connectionString: {
       description: 'A connection string to use to connect to a MySQL database.',
-      extendedDescription: 'Be sure to include credentials and the name of an existing database on your MySQL server.',
+      extendedDescription: 'Be sure to include credentials.  You can also optionally provide the name of an existing database on your MySQL server.',
       moreInfoUrl: 'https://gist.github.com/mikermcneil/46d10fd816c980cd3d9f',
       whereToGet: {
         url: 'https://gist.github.com/mikermcneil/46d10fd816c980cd3d9f'
       },
-      example: 'mysql://mikermcneil:p4ssw042D@localhost:3306/some_db',
+      example: 'mysql://mikermcneil:p4ssw02D@localhost:3306/some_db',
       required: true
     },
 
