@@ -103,6 +103,9 @@ module.exports = {
       // Use properties of `meta` directly as MySQL client config.
       // (note that we're very careful to only stick a property on the client config if it was not undefined)
       [
+        // Connection Options:
+        // ============================================
+
         // Basic:
         'host', 'port', 'database', 'user', 'password',
         'charset', 'timezone', 'ssl',
@@ -120,6 +123,16 @@ module.exports = {
           _mysqlClientConfig[mysqlClientConfKeyName] = inputs.meta[mysqlClientConfKeyName];
         }
       });
+
+      // // Now use other special properties of `meta` as our higher-level
+      // // logical machinepack options.
+      // [
+      //   // Machinepack Configuration:
+      //   // ============================================
+      //   '',
+      // ].forEach(function (pkgConfKeyName) {
+      //   // TODO
+      // });
     }
 
 
