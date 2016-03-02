@@ -186,6 +186,55 @@ MySQL.destroyConnection({
 
 
 
+////////////////////////////////////////////////////////////////////////////////////////
+// AN ALTERNATE (SIMPLER) APPROACH
+// (a driver-level concept of "manager" would allow us to avoid dealing with various
+//  different pooling implementations across different dbs)
+
+
+// This is new:
+// It is necessary because state needs to be managed outside of the context of
+// one particular connection (e.g. pool or cluster pool, or custom cluster/sharding setup)
+MySQL.createManager({
+  connectionString: 'mysql://...',
+  meta: {
+    // << this is where all sorts of stuff relating to
+    // connection configuration might be passed in (user/pass/host).
+    // There could be >1 connection strings if this is a cluster deployment
+    // with replicas and such-- that's up to the driver to implement.
+  }
+}).exec(/*...*/);
+
+
+// destroyManager is critical because some packages (looking at you `mysql`)
+// need to have special logic called in order to make the process exit gracefully.
+// This is for use in the adapter's teardown method.
+MySQL.destroyManager({
+  manager: manager,
+  meta: {}
+}).exec(/*...*/);
+
+
+// Instead of `connectionString`, now `getConnection()` expects a `manager`.
+// Note that there is currently no standardized way to force a new connection
+// to be opened.  Individual drivers may implement this if they so choose using
+// the `meta` input.  To build additional pools, create more managers using
+// `createManager()`.  For further customizability, fork this driver.
+MySQL.getConnection({
+  manager: manager,
+  meta: {}
+}).exec(/*...*/);
+
+
+// This is unchanged.  Note that there is currently no standardized way to force a
+// connection to be destroyed rather than released. Individual drivers may implement
+// this if they so choose using the `meta` input. To forcibly kill a particular pool,
+// call `destroyManager()`.  For further customizability, fork this driver.
+MySQL.releaseConnection({
+  connection: connection,
+  meta: {}
+}).exec(/*...*/);
+
 
 
 
@@ -224,7 +273,9 @@ Waterline.transaction({
   during: function (T, done) {
 
 
+  }
 
+});
 
 
 // MOVING ON
