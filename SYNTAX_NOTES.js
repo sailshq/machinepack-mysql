@@ -74,77 +74,118 @@ User.driver.getConnection({
 var Waterline = require('machinepack-waterline');
 
 
-
 // Waterline.connect()
 // Waterline.transaction()
 // Waterline.query()
 
 Waterline.connect({
   datastore: datastore,
+  during: function (db, done) {
+    // db.connection;
+
+    // See below for info on how to use w/ ORM methods.
+    return done();
+  },
   meta: {}
 }).exec(/*...*/);
 
-Waterline.connect({
-  datastore: datastore,
-  meta: {}
-}).exec(/*...*/);
 
 Waterline.transaction({
   datastore: datastore,
+  during: function (T, done) {
+    // T.connection;
+
+    // See below for info on how to use w/ ORM methods.
+    return done();
+  },
+  meta: {}
+}).exec(/*...*/);
+
+
+// Run radar query
+Waterline.query({
+  datastore: datastore,
+  statement: {},
   meta: {}
 }).exec(/*...*/);
 
 
 
 
+// Probably not yet:
+//
+// // Waterline.sendNativeQuery()
+// // Run native query
+// Waterline.sendNativeQuery({
+//   datastore: datastore,
+//   nativeQuery: 'SELECT * FROM foo;',
+//   meta: {}
+// }).exec(/*...*/);
 
-MySQL.getNewConnection({
+
+
+
+
+
+
+// ========================================================================
+// NEW MYSQL STUFF:
+
+
+MySQL.createPool({
   connectionString: 'mysql://....',
   meta: {}
 }).exec(/*...*/);
+
+MySQL.destroyPool({
+  pool: pool,
+  meta: {}
+}).exec(/*...*/);
+
+
+
 
 MySQL.getConnectionFromPool({
   pool: pool,
   meta: {}
 }).exec(/*...*/);
 
-
-MySQL.releaseConnection({
-  connection: connection,
-  meta: {}
-}).exec(/*...*/);
-
 MySQL.releaseConnectionToPool({
   connection: connection,
-  pool
   meta: {}
 }).exec(/*...*/);
 
 
 
-
-MySQL.getConnectionFromCluster({
-  cluster: cluster,
-  meta: {}
-}).exec(/*...*/);
-MySQL.releaseConnectionFromCluster({
-  cluster: cluster,
-  meta: {}
-}).exec(/*...*/);
-
-
-
-
-
-MySQL.getNewPool({
+MySQL.createConnection({
   connectionString: 'mysql://....',
   meta: {}
 }).exec(/*...*/);
 
-MySQL.getNewPool({
-  connectionString: 'mysql://....',
+MySQL.destroyConnection({
+  connection: connection,
   meta: {}
 }).exec(/*...*/);
+
+
+
+
+
+
+
+// Probably not yet:
+//
+// MySQL.getConnectionFromCluster({
+//   cluster: cluster,
+//   meta: {}
+// }).exec(/*...*/);
+// MySQL.releaseConnectionFromCluster({
+//   cluster: cluster,
+//   meta: {}
+// }).exec(/*...*/);
+
+
+
 
 
 
