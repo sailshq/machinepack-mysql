@@ -168,10 +168,31 @@ Waterline.connect({
   // and to `releaseConnection()`.
   meta: {},
 
-  // In WL core, these are passed in automatically:
-  manager: manager,
+
+  // `manager` is optional (sometimes). When this is called from WL core,
+  // `manager` is passed in if you provide `.usingManager(...)` when building
+  // your query as a deferred object.
+  //
+  // If `manager` is omitted, a new manager will be created
+  // using `createManager()` and destroyed with `destroyManager()`
+  // when this operation completes (whether it is successful or not).
+  manager: someManager,
+  //
+  // (note that if `manager` is not provided, then both `createManager` AND
+  // `destroyManager()` below are required.  And if either of those functions
+  //  is not provided, then `manager` is required.)
+
+  // Either the identity of the datastore to use
+  datastore: 'larrysDbCluster',
+  //-AND/OR-
+  //
+  // Any of these things:
+  // (if `datastore` is provided, these are optional. If any of
+  //  them are ALSO provided, then they are used as overrides)
+  createManager: MySQL.createManager,
   getConnection: MySQL.getConnection,
   releaseConnection: MySQL.releaseConnection,
+  destroyManager: MySQL.destroyManager
 
 }).exec(/*...*/);
 
@@ -197,17 +218,59 @@ Waterline.transaction({
   },
 
   // `meta` is passed through as the `meta` argin to each of
-  // the five custom functions:
-  // (`getConnection()`, `beginTransaction()`, etc.)
+  // the custom functions below.
+  // (e.g. `getConnection()`, `releaseConnection()`, etc.)
   meta: {},
 
-  // In WL core, these are passed in automatically:
-  manager: manager,
+  // `connection` is optional-- e.g. in WL core, it is passed in if
+  // you provide `.usingConnection(...)` when building your query
+  // as a deferred object.
+  //
+  // If `connection` is omitted, a new connection will be acquired
+  // from the manager using `getConnection()`.
+  connection: someConnection,
+  //
+  // (note that `getConnection` and `releaseConnection` below are always
+  // required, even if `connection` is provided.  This is just for predictability.)
+
+  // (note that if `connection` is not provided, then both `getConnection` AND
+  // `releaseConnection()` below are required.  And if either of those functions
+  //  is not provided, then `connection` is required.)
+
+
+  // `manager` is optional (sometimes). When this is called from n WL core,
+  // `manager` is passed in if you provide `.usingManager(...)` when building
+  // your query as a deferred object. If `connection` was explicitly provided,
+  // then `manager` is completely ignored.
+  //
+  // If `manager` is omitted, a new manager will be created
+  // using `createManager()` and destroyed with `destroyManager()`
+  // when this operation completes (whether it is successful or not).
+  manager: someManager,
+  //
+  // (note that if `connection` is provided, then `manager` and the two related
+  //  functions are completely ignored.  On the other hand, if connection is NOT
+  //  provided, then `manager`, `createManager` and/or `destroyManager` are used.
+  //
+  //  If `manager` is not provided, then both `createManager` AND
+  // `destroyManager()` below are required.  And if either of those functions
+  //  is not provided, then `manager` is required.)
+
+
+  // Either the identity of the datastore to use
+  datastore: 'larrysDbCluster',
+  //-AND/OR-
+  //
+  // Any of these things:
+  // (if `datastore` is provided, these are optional. If any of
+  //  them are ALSO provided, then they are used as overrides)
+  createManager: MySQL.createManager,
   getConnection: MySQL.getConnection,
   beginTransaction: MySQL.beginTransaction,
   rollbackTransaction: MySQL.rollbackTransaction,
   commitTransaction: MySQL.commitTransaction,
   releaseConnection: MySQL.releaseConnection,
+  destroyManager: MySQL.destroyManager
 
 }).exec(/*...*/);
 
@@ -218,8 +281,11 @@ Waterline.transaction({
 // Waterline.query()
 Waterline.query({
 
-  // This is a radar query statemment to run
-  statement: {},
+  // This is a radar query statement to run
+  statement: {
+    select: ['*'],
+    from: 'dogfood_brands'
+  },
 
   // `meta` is passed through as the `meta` argin to each of
   // the six custom driver functions:
@@ -232,19 +298,50 @@ Waterline.query({
   //
   // If `connection` is omitted, a new connection will be acquired
   // from the manager using `getConnection()`.
-  // connection: '===',
+  connection: someConnection,
   //
-  // (note that `getConnection` below is always required, even if
-  //  `connection` is provided.  This is just for predictability.)
+  // (note that `getConnection` and `releaseConnection` below are always
+  // required, even if `connection` is provided.  This is just for predictability.)
 
-  // In WL core, these are passed in automatically:
-  manager: manager,
+  // (note that if `connection` is not provided, then both `getConnection` AND
+  // `releaseConnection()` below are required.  And if either of those functions
+  //  is not provided, then `connection` is required.)
+
+
+  // `manager` is optional (sometimes). When this is called from n WL core,
+  // `manager` is passed in if you provide `.usingManager(...)` when building
+  // your query as a deferred object. If `connection` was explicitly provided,
+  // then `manager` is completely ignored.
+  //
+  // If `manager` is omitted, a new manager will be created
+  // using `createManager()` and destroyed with `destroyManager()`
+  // when this operation completes (whether it is successful or not).
+  manager: someManager,
+  //
+  // (note that if `connection` is provided, then `manager` and the two related
+  //  functions are completely ignored.  On the other hand, if connection is NOT
+  //  provided, then `manager`, `createManager` and/or `destroyManager` are used.
+  //
+  //  If `manager` is not provided, then both `createManager` AND
+  // `destroyManager()` below are required.  And if either of those functions
+  //  is not provided, then `manager` is required.)
+
+
+  // Either the identity of the datastore to use
+  datastore: 'larrysDbCluster',
+  //-AND/OR-
+  //
+  // Any of these things:
+  // (if `datastore` is provided, these are optional. If any of
+  //  them are ALSO provided, then they are used as overrides)
+  createManager: MySQL.createManager,
   getConnection: MySQL.getConnection,
   compileStatement: MySQL.compileStatement,
   sendNativeQuery: MySQL.sendNativeQuery,
   parseNativeQueryError: MySQL.parseNativeQueryError,
   parseNativeQueryResult: MySQL.parseNativeQueryResult,
   releaseConnection: MySQL.releaseConnection,
+  destroyManager: MySQL.destroyManager,
 
 }).exec(/*...*/);
 
@@ -257,7 +354,8 @@ Waterline.query({
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
-// SIMPLISTIC USAGE OF TRANSACTIONS IN USERLAND CODE
+// EXAMPLE:
+// LOW-LEVEL USAGE OF TRANSACTIONS IN USERLAND CODE VIA MACHINEPACK
 
 
 var MySQL = require('machinepack-mysql');
@@ -271,12 +369,12 @@ MySQL.createManager({
 }).exec(function (err, report){
   if (err) { /* ... */ }
 
-  var larrysDbCluster = report.manager;
+  var larrysDbClusterMgr = report.manager;
 
 
   Waterline.transaction({
 
-    manager: larrysDbCluster,
+    manager: larrysDbClusterMgr,
     getConnection: MySQL.getConnection,
     beginTransaction: MySQL.beginTransaction,
     rollbackTransaction: MySQL.rollbackTransaction,
@@ -315,7 +413,7 @@ MySQL.createManager({
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
-// SAME THING, BUT IN A SAILS APP
+// NOW MORE OR LESS THE SAME THING, BUT IN A SAILS APP:
 
 
 // Fetches a preconfigured deferred object hooked up to the sails-mysql adapter
@@ -349,6 +447,12 @@ sails.datastore('larrysDbCluster')
     });
   });
 })
+// Note that I could have also used `.usingConnection()` and `.usingManager()`
+// here if I needed to:
+// .getManager(manager)
+// .getConnection(someExistingConnection)
+
+// Finally, when finished setting up, we call `.exec()`
 .exec(function afterwards(err, mush) {
   if (err) {
     // Transaction failed to start, or failed and had to be rolled back.
@@ -374,12 +478,11 @@ sails.datastore('larrysDbCluster')
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // NOW ONCE MORE, BUT BACK TO PURE MACHINE USAGE
-// (taking advantage of some hypotheticals)
+// (taking advantage of the cleanest, simplest usage)
 
 var Waterline = require('machinepack-waterline');
-
 Waterline.transaction({
-
+  datastore: 'larrysDbCluster',
   during: function (T, done) {
 
     // First check that the location exists.
@@ -399,26 +502,14 @@ Waterline.transaction({
         return done(undefined, mush);
       });
     });
-  },
+  }
 
-  meta: {},
-
-  // The identity of the datastore to use.
-  datastore: 'larrysDbCluster',
-
-  // That means all of these get to be OPTIONAL:
-  // (if provided, they are used as overrides)
-  //
-  // manager: larrysDbCluster,
-  // getConnection: MySQL.getConnection,
-  // beginTransaction: MySQL.beginTransaction,
-  // rollbackTransaction: MySQL.rollbackTransaction,
-  // commitTransaction: MySQL.commitTransaction,
-  // releaseConnection: MySQL.releaseConnection,
-
-});
+}).exec(/*...*/);
 
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
 // Note that for the above to work, process-global memory would need to be used.
 // This is ok as long as we are very careful, and we namespace not just under pkg name,
 // but also under version string.  For example, the global might be a dictionary of
@@ -430,6 +521,33 @@ Waterline.transaction({
 // (effectively what happens in Sails/Waterline core as well).
 //
 // We should go with one approach or the other; definitely not both.
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
