@@ -229,10 +229,6 @@ Waterline.transaction({
   // If `connection` is omitted, a new connection will be acquired
   // from the manager using `getConnection()`.
   connection: someConnection,
-  //
-  // (note that `getConnection` and `releaseConnection` below are always
-  // required, even if `connection` is provided.  This is just for predictability.)
-
   // (note that if `connection` is not provided, then both `getConnection` AND
   // `releaseConnection()` below are required.  And if either of those functions
   //  is not provided, then `connection` is required.)
@@ -299,10 +295,6 @@ Waterline.query({
   // If `connection` is omitted, a new connection will be acquired
   // from the manager using `getConnection()`.
   connection: someConnection,
-  //
-  // (note that `getConnection` and `releaseConnection` below are always
-  // required, even if `connection` is provided.  This is just for predictability.)
-
   // (note that if `connection` is not provided, then both `getConnection` AND
   // `releaseConnection()` below are required.  And if either of those functions
   //  is not provided, then `connection` is required.)
