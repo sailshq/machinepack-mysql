@@ -4,10 +4,7 @@ module.exports = {
   friendlyName: 'Destroy manager',
 
 
-  description: 'Destroy the specified connection manager and destroying all of its active connections.',
-
-
-  extendedDescription: 'This may involve destroying a single connection, destroying a pool and its connections, destroying multiple pools and their connections, or something even more exotic.  The implementation is left up to the driver.',
+  description: 'Destroy the specified connection manager and destroy all of its active connections.',
 
 
   inputs: {
@@ -37,9 +34,9 @@ module.exports = {
       }
     },
 
-    badManager: {
-      friendlyName: 'Bad manager',
-      description: 'The provided connection manager is no longer active; or possibly never was.',
+    failed: {
+      friendlyName: 'Failed',
+      description: 'Could not destroy the provided connection manager.',
       extendedDescription:
         'Usually, this means the manager has already been destroyed.  But depending on the driver '+
         'it could also mean that database cannot be accessed.  In production, this can mean that the database '+
@@ -56,8 +53,29 @@ module.exports = {
 
 
   fn: function (inputs, exits){
-    // TODO
-    return exits.error();
+    var util = require('util');
+
+    // Note that if this driver is adapted to support managers which spawn
+    // ad-hoc connections or manage multiple pools/replicas using PoolCluster,
+    // then relevant settings would need to be included in the manager instance
+    // so that the manager could be appropriately destroyed here (in the case of
+    // ad-hoc connections, leased connections would need to be tracked on the
+    // manager, and then rounded up and disconnected here.)
+    //
+    // For now, since we only support a single pool, we simply destroy it.
+    //
+    // For more info, see:
+    //  • https://github.com/felixge/node-mysql/blob/v2.10.2/Readme.md#closing-all-the-connections-in-a-pool
+    inputs.manager.pool.end(function (err) {
+      if (err) {
+        return exits.failed({
+          error:  new Error('Failed to destroy the MySQL connection pool and/or gracefully end all connections in the pool.  Details:\n=== === ===\n'+err.stack)
+        });
+      }
+      // All connections in the pool have ended.
+      console.log('FILLED UP THE POOL WITH GRAVEL.');
+      return exits.success();
+    });
   }
 
 
