@@ -18,13 +18,6 @@ module.exports = {
 
   inputs: {
 
-    queryType: {
-      description: 'The type of query operation this raw error came from.',
-      extendedDescription: 'Either "select", "insert", "delete", or "update".  This determines how the provided raw error will be parsed/coerced.',
-      required: true,
-      example: 'select',// (select|insert|delete|update)
-    },
-
     nativeQueryError: {
       description: 'The error sent back from the database as a result of a failed native query.',
       extendedDescription: 'This is referring to the raw error; i.e. the `error` property of the dictionary returned through the `queryFailed` exit of `sendNativeQuery()` in this driver.',

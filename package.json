@@ -35,7 +35,9 @@
       "begin-transaction",
       "commit-transaction",
       "rollback-transaction",
-      "compile-statement"
+      "compile-statement",
+      "create-manager",
+      "destroy-manager"
     ],
     "interfaces": [
       "driveable",

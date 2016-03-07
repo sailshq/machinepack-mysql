@@ -49,6 +49,9 @@ module.exports = {
     // Release connection.
     try {
       inputs.connection.release();
+
+      // If we made it here, releasing the connection gracefully must have worked.
+      return exits.success();
     }
     catch (_releaseErr) {
       // If the connection cannot be released back to the pool gracefully,
@@ -62,13 +65,9 @@ module.exports = {
       }
 
       // Otherwise, forcing a disconnect worked:
-      console.warn('Could not release MySQL connection gracefully, but connection was forcibly destroyed.  Details:\n=== === ===\n'+_releaseErr.stack);
       return exits.success();
+      // console.warn('Could not release MySQL connection gracefully, but connection was forcibly destroyed.  Details:\n=== === ===\n'+_releaseErr.stack);
     }
-
-    // If we made it here, releasing the connection gracefully must have worked.
-    return exits.success();
-
   }
 
 

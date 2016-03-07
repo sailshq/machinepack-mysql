@@ -37,7 +37,7 @@ module.exports = {
       outputDescription: 'The `result` property is the result data the database sent back.  The `meta` property is reserved for custom driver-specific extensions.',
       moreInfoUrl: 'https://github.com/felixge/node-mysql#getting-the-id-of-an-inserted-row',
       example: {
-        result: '*',
+        result: '===',
         meta: '==='
       }
     },

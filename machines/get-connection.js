@@ -9,14 +9,16 @@ module.exports = {
 
   inputs: {
 
-    connectionString: {
-      description: 'A connection string to use to connect to a MySQL database.',
-      extendedDescription: 'Be sure to include credentials.  You can also optionally provide the name of an existing database on your MySQL server.',
-      moreInfoUrl: 'https://gist.github.com/mikermcneil/46d10fd816c980cd3d9f',
-      whereToGet: {
-        url: 'https://gist.github.com/mikermcneil/46d10fd816c980cd3d9f'
-      },
-      example: 'mysql://mikermcneil:p4ssw02D@localhost:3306/some_db',
+    manager: {
+      friendlyName: 'Manager',
+      description: 'The connection manager instance to acquire the connection from.',
+      extendedDescription:
+        'Only managers built using the `createManager()` method of this driver are supported. '+
+        'Also, the database connection manager instance provided must not have been destroyed--'+
+        'i.e. once `destroyManager()` is called on a manager, no more connections can be acquired '+
+        'from it (also note that all existing connections become inactive-- see `destroyManager()` '+
+        'for more on that).',
+      example: '===',
       required: true
     },
 
@@ -44,19 +46,8 @@ module.exports = {
       }
     },
 
-    malformed: {
-      description: 'The provided connection string is malformed.',
-      extendedDescription: 'The provided connection string is not valid for MySQL.',
-      outputVariableName: 'report',
-      outputDescription: 'The `error` property is a JavaScript Error instance explaining that (and preferably "why") the provided connection string is invalid.  The `meta` property is reserved for custom driver-specific extensions.',
-      example: {
-        error: '===',
-        meta: '==='
-      }
-    },
-
-    failedToConnect: {
-      description: 'Could not acquire a connection to the database using the specified connection string.',
+    failed: {
+      description: 'Could not acquire a connection to the database using the specified manager.',
       extendedDescription: 'This might mean any of the following:\n'+
       ' + the credentials encoded in the connection string are incorrect\n'+
       ' + there is no database server running at the provided host (i.e. even if it is just that the database process needs to be started)\n'+

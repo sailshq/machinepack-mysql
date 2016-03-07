@@ -17,16 +17,19 @@ module.exports = {
 
     queryType: {
       description: 'The type of query operation this raw result came from.',
-      extendedDescription: 'Either "select", "insert", "delete", or "update".  This determines how the provided raw result will be parsed/coerced.',
+      moreInfoUrl: 'https://github.com/node-machine/waterline-driver-interface#query-results',
+      extendedDescription:
+        'Either "select", "insert", "destroy", "update", "count", "sum", or "avg".  '+
+        'This determines how the provided raw result will be parsed/coerced.',
       required: true,
-      example: 'select',// (select|insert|delete|update)
+      example: 'select',// (select|insert|destroy|update|count|sum|avg)
     },
 
     nativeQueryResult: {
       description: 'The result data sent back from the the database as a result of a native query.',
       extendedDescription: 'Specifically, be sure to use the `result` property of the output report from a successful native query (i.e. don\'t include `meta`!)  The data provided will be coerced to a JSON-serializable value if it isn\'t one already (see [rttc.dehydrate()](https://github.com/node-machine/rttc#dehydratevalue-allownullfalse-dontstringifyfunctionsfalse)). That means any Date instances therein will be converted to timezone-agnostic ISO timestamp strings (i.e. JSON timestamps).',
       required: true,
-      example: '*'
+      example: '==='
     },
 
     meta:
