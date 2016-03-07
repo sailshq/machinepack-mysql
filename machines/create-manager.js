@@ -46,8 +46,13 @@ module.exports = {
       example: '->'
     },
 
-    meta:
-      require('../constants/meta.input')
+    meta: {
+      friendlyName: 'Meta (additional options)',
+      description: 'Additional MySQL-specific options to use when connecting.',
+      extendedDescription: 'If specified, should be a dictionary. If there is a conflict between something provided in the connection string, and something in `meta`, the connection string takes priority.',
+      moreInfoUrl: 'https://gist.github.com/mikermcneil/46d10fd816c980cd3d9f',
+      example: '==='
+    }
 
   },
 
