@@ -272,7 +272,7 @@ module.exports = {
     // Finally, build and return the manager.
     var mgr = {
       pool: pool,
-      config: _mysqlClientConfig,
+      meta: inputs.meta,
       connectionString: inputs.connectionString
     };
     return exits.success({
