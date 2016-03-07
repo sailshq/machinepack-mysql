@@ -271,7 +271,9 @@ module.exports = {
 
     // Finally, build and return the manager.
     var mgr = {
-      pool: pool
+      pool: pool,
+      config: _mysqlClientConfig,
+      connectionString: inputs.connectionString
     };
     return exits.success({
       manager: mgr
