@@ -73,7 +73,6 @@ module.exports = {
         });
       }
       // All connections in the pool have ended.
-      console.log('FILLED UP THE POOL WITH GRAVEL.');
       return exits.success();
     });
   }
