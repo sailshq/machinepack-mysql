@@ -16,7 +16,7 @@
   "author": "The Treeline Company",
   "license": "MIT",
   "dependencies": {
-    "machine": "~12.0.1",
+    "machine": "^12.0.1",
     "machinepack-sql-builder": "particlebanana/waterline-query-builder",
     "mysql": "2.10.2"
   },
@@ -39,11 +39,11 @@
       "create-manager",
       "destroy-manager"
     ],
-    "interfaces": [
-      "driveable",
-      "queryable",
-      "transactional"
-    ]
+    "implements": {
+      "connectable": "1.0",
+      "queryable": "1.0",
+      "transactional": "1.0"
+    }
   },
   "repository": {
     "type": "git",
