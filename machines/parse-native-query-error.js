@@ -25,8 +25,12 @@ module.exports = {
       example: '==='
     },
 
-    meta:
-      require('../constants/meta.input')
+    meta: {
+      friendlyName: 'Meta (custom)',
+      description: 'Additional stuff to pass to the driver.',
+      extendedDescription: 'This is reserved for custom driver-specific extensions.  Please refer to the documentation for the driver you are using for more specific information.',
+      example: '==='
+    }
 
   },
 
@@ -47,53 +51,54 @@ module.exports = {
   },
 
 
-  fn: function (inputs, exits) {
-    var util = require('util');
-
-
+  fn: function parseNativeQueryError(inputs, exits) {
+    var _ = require('lodash');
 
     // Quick reference of hand-tested errors:
 
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
+    // --o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
     // `code`  : 'ER_PARSE_ERROR'
     // `errno`  : 1064
     // `sqlState`  : '42000'
     // `index`  : 0
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
+    // --o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
 
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
+    // --o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
     // `code`  : 'ER_NO_SUCH_TABLE'
     // `errno`  : 1146
     // `sqlState`  : '42S02'
     // `index`  : 0
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
+    // --o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
 
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
+    // --o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
     // `code`  : 'ER_DUP_ENTRY'
     // `errno`  : 1062
     // `sqlState`  : '23000'
     // `index`  : 0
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
-
+    // --o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
 
 
     // Local variable (`err`) for convenience.
     var err = inputs.nativeQueryError;
 
     // `footprint` is primarily what will be returned by this machine.
-    var footprint;
-
-    // `meta` will also be returned if it is set below.
-    var meta;
+    // For miscellaneous errors which are not explicitly in the
+    // spec, return the catchall footprint.  Drivers should not
+    // add their own additional footprints-- instead, if they want
+    // to allow for easily identifying a particular error, the
+    // `catchall` footprint should still be used; but additional
+    // information sent back in `meta`.
+    var footprint = { identity: 'catchall' };
 
 
     // If the incoming native query error is not an object, or it is
     // missing a `code` property, then we'll go ahead and bail out w/
     // the "catchall" footprint to avoid continually doing these basic
     // checks in the more detailed error negotiation below.
-    if ( !util.isObject(err) || !err.code) {
+    if (!_.isObject(err) || !err.code) {
       return exits.success({
-        footprint: { identity: 'catchall' }
+        footprint: footprint,
+        meta: inputs.meta
       });
     }
 
@@ -106,7 +111,7 @@ module.exports = {
     // > that is, only one of them should be run.
 
 
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
+    // --o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
     // `code`  : 'ER_DUP_ENTRY'
     // `errno`  : 1062
     // `sqlState`  : '23000'
@@ -116,7 +121,7 @@ module.exports = {
     //      Waterline driver spec.  If additional information
     //      is needed in userland beyond what is guaranteed in
     //      the spec, then you should take advantage of `meta`.
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
+    // --o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
     if (err.code === 'ER_DUP_ENTRY') {
       // Negotiate `notUnique` error footprint.
       footprint = {
@@ -126,16 +131,16 @@ module.exports = {
       // Now build our footprint's `keys` property by manually parsing
       // the MySQL error message and extracting the relevant bits.
       // (See also: https://github.com/balderdashy/sails-mysql/blob/2c414f1191c3595df2cea8e40259811eb3ca05f9/lib/adapter.js#L1223)
-      if ( util.isString(err.message) ) {
+      if (_.isString(err.message)) {
         var matches = err.message.match(/Duplicate entry '.*' for key '(.*?)'$/);
-        if ( matches && matches.length > 0 ) {
+        if (matches && matches.length > 0) {
           footprint.keys.push(matches[1]);
         }
       }
     }
 
 
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
+    // --o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
     // `code`  : 'ER_NO_SUCH_TABLE'
     // `errno`  : 1146
     // `sqlState`  : '42S02'
@@ -145,7 +150,7 @@ module.exports = {
     //      reference. If this driver wants to move ahead of
     //      the core Waterline/machine spec, this can be handled
     //      using the `catchall` footprint + `meta`.
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
+    // --o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
     // else if ( ... ){
     //   footprint = { identity: 'catchall' };
     //   // e.g.
@@ -153,7 +158,7 @@ module.exports = {
     // }
 
 
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
+    // --o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
     // `code`  : 'ER_PARSE_ERROR'
     // `errno`  : 1064
     // `sqlState`  : '42000'
@@ -163,29 +168,12 @@ module.exports = {
     //      reference. If this driver wants to move ahead of
     //      the core Waterline/machine spec, this can be handled
     //      using the `catchall` footprint + `meta`.
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
+    // --o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
     // else if ( ... ){
     //   footprint = { identity: 'catchall' };
     //   // e.g.
     //   meta = { problem: 'couldNotParse', foo: ..., bar: ... };
     // }
-
-
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
-    // ??????
-    //
-    // For miscellaneous errors which are not explicitly in the
-    // spec, return the catchall footprint.  Drivers should not
-    // add their own additional footprints-- instead, if they want
-    // to allow for easily identifying a particular error, the
-    // `catchall` footprint should still be used; but additional
-    // information sent back in `meta`.
-    //
-    //--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>
-    else {
-      footprint = { identity: 'catchall' };
-    }
-
 
 
     // Finally, return the normalized footprint.
@@ -194,7 +182,7 @@ module.exports = {
     //  into `meta` above)
     return exits.success({
       footprint: footprint,
-      meta: meta
+      meta: inputs.meta
     });
   }
 

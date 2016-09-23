@@ -23,8 +23,12 @@ module.exports = {
       required: true
     },
 
-    meta:
-      require('../constants/meta.input')
+    meta: {
+      friendlyName: 'Meta (custom)',
+      description: 'Additional stuff to pass to the driver.',
+      extendedDescription: 'This is reserved for custom driver-specific extensions.  Please refer to the documentation for the driver you are using for more specific information.',
+      example: '==='
+    }
 
   },
 
@@ -65,8 +69,8 @@ module.exports = {
   },
 
 
-  fn: function (inputs, exits) {
-    var SQLBuilder = require('machinepack-sql-builder');
+  fn: function compileStatement(inputs, exits) {
+    var SQLBuilder = require('waterline-query-builder');
 
     SQLBuilder.generateSql({
       dialect: 'mysql',
@@ -77,20 +81,23 @@ module.exports = {
       },
       malformed: function malformed(err) {
         return exits.malformed({
-          error: err
+          error: err,
+          meta: inputs.meta
         });
       },
-      notSupported: function notSupported(err){
+      notSupported: function notSupported(err) {
         return exits.notSupported({
-          error: err
+          error: err,
+          meta: inputs.meta
         });
       },
       success: function success(compiledNativeQuery) {
         return exits.success({
-          nativeQuery: compiledNativeQuery
+          nativeQuery: compiledNativeQuery,
+          meta: inputs.meta
         });
       }
-    });//</generateQuery>
+    });
   }
 
 

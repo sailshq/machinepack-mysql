@@ -19,10 +19,10 @@ module.exports = {
       description: 'The type of query operation this raw result came from.',
       moreInfoUrl: 'https://github.com/node-machine/waterline-driver-interface#query-results',
       extendedDescription:
-        'Either "select", "insert", "destroy", "update", "count", "sum", or "avg".  '+
+        'Either "select", "insert", "destroy", "update", "count", "sum", or "avg".  ' +
         'This determines how the provided raw result will be parsed/coerced.',
       required: true,
-      example: 'select',// (select|insert|destroy|update|count|sum|avg)
+      example: 'select'
     },
 
     nativeQueryResult: {
@@ -32,8 +32,12 @@ module.exports = {
       example: '==='
     },
 
-    meta:
-      require('../constants/meta.input')
+    meta: {
+      friendlyName: 'Meta (custom)',
+      description: 'Additional stuff to pass to the driver.',
+      extendedDescription: 'This is reserved for custom driver-specific extensions.  Please refer to the documentation for the driver you are using for more specific information.',
+      example: '==='
+    }
 
   },
 
@@ -53,10 +57,10 @@ module.exports = {
   },
 
 
-  fn: function (inputs, exits) {
-
+  fn: function parseNativeQueryResult(inputs, exits) {
     var normalizedResult;
-    switch (inputs.queryType){
+
+    switch (inputs.queryType) {
       case 'select':
         normalizedResult = inputs.nativeQueryResult.rows;
         break;
@@ -84,7 +88,8 @@ module.exports = {
     }
 
     return exits.success({
-      result: normalizedResult
+      result: normalizedResult,
+      meta: inputs.meta
     });
   }
 
