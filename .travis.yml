@@ -10,6 +10,6 @@ env:
   - DB_USER=mp DB_PASS='mp'
 before_script:
   - mysql -e 'create database mppg;'
-  - mysql -e "create user 'mp'@'localhost' with identified with 'mp';"
+  - mysql -e "create user 'mp'@'localhost' identified with 'mp';"
   - mysql -e "grant all privileges on * . * to 'mp'@'localhost';"
   - mysql -e "flush privileges;"
