@@ -4,9 +4,11 @@ adapter:
    - .:/usr/src/app
   links:
    - mysql
-postgres:
+
+mysql:
   image: mysql
   environment:
-   - MYSQL_PASSWORD=mp
-   - MYSQL_USER=mp
    - MYSQL_DATABASE=mppg
+   - MYSQL_USER=mp
+   - MYSQL_PASSWORD=mp
+   - MYSQL_ROOT_PASSWORD=mppg
