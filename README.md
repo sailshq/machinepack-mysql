@@ -26,4 +26,4 @@ Learn more at <a href="http://node-machine.org/implementing/FAQ" title="Machine 
 
 ## License
 
-MIT &copy; 2015 Cody Stoltman, Mike McNeil, Scott Gress
+MIT &copy; 2015 - 2016 Cody Stoltman, Mike McNeil, Scott Gress
