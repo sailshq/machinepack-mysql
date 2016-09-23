@@ -8,13 +8,13 @@ module.exports = {
 
 
   extendedDescription:
-  'The `manager` instance returned by this method contains any configuration that is necessary '+
-  'for communicating with the database and establishing connections (e.g. host, user, password) '+
-  'as well as any other relevant metadata.  The manager will often also contain a reference '+
-  'to some kind of native container (e.g. a connection pool).\n'+
-  '\n'+
-  'Note that a manager instance does not necessarily need to correspond with a pool though--'+
-  'it might simply be a container for storing config, or it might refer to multiple pools '+
+  'The `manager` instance returned by this method contains any configuration that is necessary ' +
+  'for communicating with the database and establishing connections (e.g. host, user, password) ' +
+  'as well as any other relevant metadata.  The manager will often also contain a reference ' +
+  'to some kind of native container (e.g. a connection pool).\n' +
+  '\n' +
+  'Note that a manager instance does not necessarily need to correspond with a pool though--' +
+  'it might simply be a container for storing config, or it might refer to multiple pools ' +
   '(e.g. a PoolCluster from felixge\'s `mysql` package).',
 
 
@@ -34,14 +34,14 @@ module.exports = {
     onUnexpectedFailure: {
       description: 'A function to call any time an unexpected error event is received from this manager or any of its connections.',
       extendedDescription:
-        'This can be used for anything you like, whether that\'s sending an email to devops, '+
-        'or something as simple as logging a warning to the console.\n'+
-        '\n'+
-        'For example:\n'+
-        '```\n'+
-        'onUnexpectedFailure: function (err) {\n'+
-        '  console.warn(\'Unexpected failure in database manager:\',err);\n'+
-        '}\n'+
+        'This can be used for anything you like, whether that\'s sending an email to devops, ' +
+        'or something as simple as logging a warning to the console.\n' +
+        '\n' +
+        'For example:\n' +
+        '```\n' +
+        'onUnexpectedFailure: function (err) {\n' +
+        '  console.warn(\'Unexpected failure in database manager:\',err);\n' +
+        '}\n' +
         '```',
       example: '->'
     },
@@ -62,10 +62,10 @@ module.exports = {
     success: {
       description: 'The manager was successfully created.',
       extendedDescription:
-        'The new manager should be passed in to `getConnection()`.'+
-        'Note that _no matter what_, this manager must be capable of '+
-        'spawning an infinite number of connections (i.e. via `getConnection()`).  '+
-        'The implementation of how exactly it does this varies on a driver-by-driver '+
+        'The new manager should be passed in to `getConnection()`.' +
+        'Note that _no matter what_, this manager must be capable of ' +
+        'spawning an infinite number of connections (i.e. via `getConnection()`).  ' +
+        'The implementation of how exactly it does this varies on a driver-by-driver ' +
         'basis; and it may also vary based on the configuration passed into the `meta` input.',
       outputVariableName: 'report',
       outputDescription: 'The `manager` property is a manager instance that will be passed into `getConnection()`. The `meta` property is reserved for custom driver-specific extensions.',
@@ -88,19 +88,19 @@ module.exports = {
     failed: {
       description: 'Could not create a connection manager for this database using the specified connection string.',
       extendedDescription:
-        'If this exit is called, it might mean any of the following:\n'+
-        ' + the credentials encoded in the connection string are incorrect\n'+
-        ' + there is no database server running at the provided host (i.e. even if it is just that the database process needs to be started)\n'+
-        ' + there is no software "database" with the specified name running on the server\n'+
-        ' + the provided connection string does not have necessary access rights for the specified software "database"\n'+
-        ' + this Node.js process could not connect to the database, perhaps because of firewall/proxy settings\n'+
-        ' + any other miscellaneous connection error\n'+
-        '\n'+
-        'Note that even if the database is unreachable, bad credentials are being used, etc, '+
-        'this exit will not necessarily be called-- that depends on the implementation of the driver '+
-        'and any special configuration passed to the `meta` input. e.g. if a pool is being used that spins up '+
-        'multiple connections immediately when the manager is created, then this exit will be called if any of '+
-        'those initial attempts fail.  On the other hand, if the manager is designed to produce adhoc connections, '+
+        'If this exit is called, it might mean any of the following:\n' +
+        ' + the credentials encoded in the connection string are incorrect\n' +
+        ' + there is no database server running at the provided host (i.e. even if it is just that the database process needs to be started)\n' +
+        ' + there is no software "database" with the specified name running on the server\n' +
+        ' + the provided connection string does not have necessary access rights for the specified software "database"\n' +
+        ' + this Node.js process could not connect to the database, perhaps because of firewall/proxy settings\n' +
+        ' + any other miscellaneous connection error\n' +
+        '\n' +
+        'Note that even if the database is unreachable, bad credentials are being used, etc, ' +
+        'this exit will not necessarily be called-- that depends on the implementation of the driver ' +
+        'and any special configuration passed to the `meta` input. e.g. if a pool is being used that spins up ' +
+        'multiple connections immediately when the manager is created, then this exit will be called if any of ' +
+        'those initial attempts fail.  On the other hand, if the manager is designed to produce adhoc connections, ' +
         'any errors related to bad credentials, connectivity, etc. will not be caught until `getConnection()` is called.',
       outputVariableName: 'report',
       outputDescription: 'The `error` property is a JavaScript Error instance with more information and a stack trace.  The `meta` property is reserved for custom driver-specific extensions.',
@@ -113,9 +113,10 @@ module.exports = {
   },
 
 
-  fn: function (inputs, exits){
+  fn: function createManager(inputs, exits) {
     var util = require('util');
     var Url = require('url');
+    var _ = require('lodash');
     var felix = require('mysql');
 
 
@@ -133,7 +134,6 @@ module.exports = {
     // contributions to the core driver in this area are welcome and greatly appreciated!
 
 
-
     // Build a local variable (`_mysqlClientConfig`) to house a dictionary
     // of additional MySQL options that will be passed into `.createPool()`
     // (Note that these could also be used with `.connect()` or `.createPoolCluster()`)
@@ -148,11 +148,9 @@ module.exports = {
     var _mysqlClientConfig = {};
 
 
-
-
     // Validate and parse `meta` (if specified).
-    if ( !util.isUndefined(inputs.meta) ) {
-      if ( !util.isObject(inputs.meta) ) {
+    if (!_.isUndefined(inputs.meta)) {
+      if (!_.isObject(inputs.meta)) {
         return exits.error('If provided, `meta` must be a dictionary.');
       }
 
@@ -175,8 +173,8 @@ module.exports = {
         // Pool-specific:
         'acquireTimeout', 'waitForConnections', 'connectionLimit', 'queueLimit',
 
-      ].forEach(function (mysqlClientConfKeyName){
-        if ( !util.isUndefined(inputs.meta[mysqlClientConfKeyName]) ) {
+      ].forEach(function processKey(mysqlClientConfKeyName) {
+        if (!_.isUndefined(inputs.meta[mysqlClientConfKeyName])) {
           _mysqlClientConfig[mysqlClientConfKeyName] = inputs.meta[mysqlClientConfKeyName];
         }
       });
@@ -207,20 +205,27 @@ module.exports = {
 
       // Validate that a protocol was found before other pieces
       // (otherwise other parsed info will be very weird and wrong)
-      if ( !parsedConnectionStr.protocol ) {
+      if (!parsedConnectionStr.protocol || parsedConnectionStr.protocol !== 'mysql:') {
         throw new Error('Protocol (i.e. `mysql://`) is required in connection string.');
       }
 
       // Parse port & host
       var DEFAULT_HOST = 'localhost';
       var DEFAULT_PORT = 3306;
-      if (parsedConnectionStr.port) { _mysqlClientConfig.port = +parsedConnectionStr.port; }
-      else { _mysqlClientConfig.port = DEFAULT_PORT; }
-      if (parsedConnectionStr.hostname) { _mysqlClientConfig.host = parsedConnectionStr.hostname; }
-      else { _mysqlClientConfig.host = DEFAULT_HOST; }
+      if (parsedConnectionStr.port) {
+        _mysqlClientConfig.port = +parsedConnectionStr.port;
+      } else {
+        _mysqlClientConfig.port = DEFAULT_PORT;
+      }
+
+      if (parsedConnectionStr.hostname) {
+        _mysqlClientConfig.host = parsedConnectionStr.hostname;
+      } else {
+        _mysqlClientConfig.host = DEFAULT_HOST;
+      }
 
       // Parse user & password
-      if ( parsedConnectionStr.auth && util.isString(parsedConnectionStr.auth) ) {
+      if (parsedConnectionStr.auth && _.isString(parsedConnectionStr.auth)) {
         var authPieces = parsedConnectionStr.auth.split(/:/);
         if (authPieces[0]) {
           _mysqlClientConfig.user = authPieces[0];
@@ -231,21 +236,21 @@ module.exports = {
       }
 
       // Parse database name
-      if (util.isString(parsedConnectionStr.pathname) ) {
+      if (_.isString(parsedConnectionStr.pathname)) {
         var _databaseName = parsedConnectionStr.pathname;
         // Trim leading and trailing slashes
         _databaseName = _databaseName.replace(/^\/+/, '');
         _databaseName = _databaseName.replace(/\/+$/, '');
         // If anything is left, use it as the database name.
-        if ( _databaseName ) {
+        if (_databaseName) {
           _mysqlClientConfig.database = _databaseName;
         }
       }
-    }
-    catch (_e) {
-      _e.message = util.format('Provided value (`%s`) is not a valid MySQL connection string.',inputs.connectionString) + ' Error details: '+ _e.message;
+    } catch (_e) {
+      _e.message = util.format('Provided value (`%s`) is not a valid MySQL connection string.', inputs.connectionString) + ' Error details: ' + _e.message;
       return exits.malformed({
-        error: _e
+        error: _e,
+        meta: inputs.meta
       });
     }
 
@@ -261,24 +266,23 @@ module.exports = {
     //
     // For more background, see:
     //  • https://github.com/felixge/node-mysql/blob/v2.10.2/Readme.md#error-handling
-    pool.on('error', function (err){
+    pool.on('error', function err(err) {
       // When/if something goes wrong in this pool, call the `onUnexpectedFailure` notifier
       // (if one was provided)
-      if (!util.isUndefined(onUnexpectedFailure)) {
-        onUnexpectedFailure(err || new Error('One or more pooled connections to MySQL database were lost. Did the database server go offline?'));
+      if (!_.isUndefined(inputs.onUnexpectedFailure)) {
+        inputs.onUnexpectedFailure(err || new Error('One or more pooled connections to MySQL database were lost. Did the database server go offline?'));
       }
     });
 
     // Finally, build and return the manager.
     var mgr = {
       pool: pool,
-      meta: inputs.meta,
       connectionString: inputs.connectionString
     };
     return exits.success({
-      manager: mgr
+      manager: mgr,
+      meta: inputs.meta,
     });
-
   }
 
 

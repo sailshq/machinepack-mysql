@@ -17,8 +17,12 @@ module.exports = {
       required: true
     },
 
-    meta:
-      require('../constants/meta.input')
+    meta: {
+      friendlyName: 'Meta (custom)',
+      description: 'Additional stuff to pass to the driver.',
+      extendedDescription: 'This is reserved for custom driver-specific extensions.  Please refer to the documentation for the driver you are using for more specific information.',
+      example: '==='
+    }
 
   },
 
@@ -38,8 +42,8 @@ module.exports = {
       friendlyName: 'Failed',
       description: 'Could not destroy the provided connection manager.',
       extendedDescription:
-        'Usually, this means the manager has already been destroyed.  But depending on the driver '+
-        'it could also mean that database cannot be accessed.  In production, this can mean that the database '+
+        'Usually, this means the manager has already been destroyed.  But depending on the driver ' +
+        'it could also mean that database cannot be accessed.  In production, this can mean that the database ' +
         'server(s) became overwhelemed or were shut off while some business logic was in progress.',
       outputVariableName: 'report',
       outputDescription: 'The `error` property is a JavaScript Error instance with more information and a stack trace.  The `meta` property is reserved for custom driver-specific extensions.',
@@ -52,9 +56,7 @@ module.exports = {
   },
 
 
-  fn: function (inputs, exits){
-    var util = require('util');
-
+  fn: function destroyManager(inputs, exits) {
     // Note that if this driver is adapted to support managers which spawn
     // ad-hoc connections or manage multiple pools/replicas using PoolCluster,
     // then relevant settings would need to be included in the manager instance
@@ -66,14 +68,17 @@ module.exports = {
     //
     // For more info, see:
     //  • https://github.com/felixge/node-mysql/blob/v2.10.2/Readme.md#closing-all-the-connections-in-a-pool
-    inputs.manager.pool.end(function (err) {
+    inputs.manager.pool.end(function end(err) {
       if (err) {
         return exits.failed({
-          error:  new Error('Failed to destroy the MySQL connection pool and/or gracefully end all connections in the pool.  Details:\n=== === ===\n'+err.stack)
+          error: new Error('Failed to destroy the MySQL connection pool and/or gracefully end all connections in the pool.  Details:\n=== === ===\n' + err.stack),
+          meta: inputs.meta
         });
       }
       // All connections in the pool have ended.
-      return exits.success();
+      return exits.success({
+        meta: inputs.meta
+      });
     });
   }
 
