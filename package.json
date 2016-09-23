@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Structured Node.js bindings for MySQL.",
   "scripts": {
-    "test": "node ./node_modules/test-machinepack-mocha/bin/testmachinepack-mocha.js"
+    "test": "node ./node_modules/mocha/bin/mocha --recursive",
+    "fasttest": "node ./node_modules/mocha/bin/mocha --recursive",
+    "pretest": "npm run lint",
+    "lint": "eslint machines test",
   },
   "keywords": [
     "mysql",
@@ -16,12 +19,15 @@
   "author": "The Treeline Company",
   "license": "MIT",
   "dependencies": {
-    "machine": "^12.0.1",
-    "machinepack-sql-builder": "particlebanana/waterline-query-builder",
-    "mysql": "2.10.2"
+    "lodash": "3.10.1",
+    "machine": "12.4.0",
+    "mysql": "2.10.2",
+    "waterline-query-builder": "treelinehq/waterline-query-builder"
   },
   "devDependencies": {
-    "test-machinepack-mocha": "^2.1.1"
+    "eslint": "3.5.0",
+    "espree": "3.3.0",
+    "mocha": "3.0.2"
   },
   "machinepack": {
     "friendlyName": "MySQL",
@@ -47,6 +53,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:particlebanana/machinepack-mysql.git"
+    "url": "git@github.com:treelinehq/machinepack-mysql.git"
   }
 }
