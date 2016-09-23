@@ -8,7 +8,7 @@
 Structured Node.js bindings for MySql.
 
 
-## Installation &nbsp; [![NPM version](https://badge.fury.io/js/machinepack-mysql.svg)](http://badge.fury.io/js/machinepack-mysql) [![Build Status](https://travis-ci.org/particlebanana/machinepack-mysql.png?branch=master)](https://travis-ci.org/particlebanana/machinepack-mysql)
+## Installation &nbsp; [![NPM version](https://badge.fury.io/js/machinepack-mysql.svg)](http://badge.fury.io/js/machinepack-mysql) [![Build Status](https://travis-ci.org/treelinehq/machinepack-mysql.png?branch=master)](https://travis-ci.org/treelinehq/machinepack-mysql)
 
 ```sh
 $ npm install machinepack-mysql
@@ -27,4 +27,3 @@ Learn more at <a href="http://node-machine.org/implementing/FAQ" title="Machine 
 ## License
 
 MIT &copy; 2015 Cody Stoltman, Mike McNeil, Scott Gress
-
