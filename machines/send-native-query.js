@@ -68,7 +68,6 @@ module.exports = {
       outputVariableName: 'report',
       outputDescription: 'The `meta` property is reserved for custom driver-specific extensions.',
       example: {
-        error: '===',
         meta: '==='
       }
     }

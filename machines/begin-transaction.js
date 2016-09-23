@@ -49,7 +49,6 @@ module.exports = {
       outputVariableName: 'report',
       outputDescription: 'The `meta` property is reserved for custom driver-specific extensions.',
       example: {
-        error: '===',
         meta: '==='
       }
     }
@@ -69,9 +68,8 @@ module.exports = {
       error: function error(err) {
         return exits.error(err);
       },
-      badConnection: function badConnection(report) {
+      badConnection: function badConnection() {
         return exits.badConnection({
-          error: report,
           meta: inputs.meta
         });
       },

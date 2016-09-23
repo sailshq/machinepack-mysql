@@ -50,7 +50,6 @@ module.exports = {
       description: 'Additional stuff to pass to the driver.',
       extendedDescription: 'This is reserved for custom driver-specific extensions.  Please refer to the documentation for the driver you are using for more specific information.',
       example: {
-        error: '===',
         meta: '==='
       }
     }
@@ -70,9 +69,8 @@ module.exports = {
       error: function error(err) {
         return exits.error(err);
       },
-      badConnection: function badConnection(report) {
+      badConnection: function badConnection() {
         return exits.badConnection({
-          error: report,
           meta: inputs.meta
         });
       },
