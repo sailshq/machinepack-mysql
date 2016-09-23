@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - "6"
+  - "5"
+  - "4"
+sudo: false
+services:
+  - mysql
+env:
+  - DB_USER=mp DB_PASS='mp'
+before_script:
+  - mysql -e 'create database mppg;' -U root
+  - mysql -e "create user 'mp'@'localhost' with identified with 'mp';"
+  - mysql -e "grant all privileges on * . * to 'mp'@'localhost';"
+  - mysql -e "flush privileges;"
