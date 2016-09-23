@@ -1,0 +1,12 @@
+adapter:
+  build: .
+  volumes:
+   - .:/usr/src/app
+  links:
+   - mysql
+postgres:
+  image: mysql
+  environment:
+   - MYSQL_PASSWORD=mp
+   - MYSQL_USER=mp
+   - MYSQL_DATABASE=mppg
