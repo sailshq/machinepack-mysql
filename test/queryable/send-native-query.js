@@ -33,22 +33,47 @@ describe('Queryable ::', function() {
 
           // Store the connection
           connection = report.connection;
-          return done();
+
+          // Create a table to use for testing
+          // Uses sendNativeQuery but doesn't get rows or anything.
+          // TODO: figure out a query that can run with the given permissions
+          // that doesn't need an additional table
+          Pack.sendNativeQuery({
+            connection: connection,
+            nativeQuery: 'CREATE TABLE IF NOT EXISTS people(name varchar(255));'
+          })
+          .exec(function(err) {
+            if (err) {
+              return done(err);
+            }
+
+            return done();
+          });
         });
       });
     });
 
     // Afterwards release the connection
     after(function(done) {
-      Pack.releaseConnection({
-        connection: connection
-      }).exec(done);
+      Pack.sendNativeQuery({
+        connection: connection,
+        nativeQuery: 'DROP TABLE people;'
+      })
+      .exec(function(err) {
+        if (err) {
+          return done(err);
+        }
+
+        Pack.releaseConnection({
+          connection: connection
+        }).exec(done);
+      });
     });
 
     it('should run a native query and return the reports', function(done) {
       Pack.sendNativeQuery({
         connection: connection,
-        nativeQuery: 'SHOW GRANTS FOR \'mp\';'
+        nativeQuery: 'select * from people;'
       })
       .exec(function(err, report) {
         if (err) {
@@ -56,7 +81,6 @@ describe('Queryable ::', function() {
         }
 
         assert(_.isArray(report.result.rows));
-        assert(report.result.rows.length);
 
         return done();
       });
