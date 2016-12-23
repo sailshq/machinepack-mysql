@@ -85,12 +85,16 @@ module.exports = {
         break;
 
       case 'avg':
-        var avg = _.first(inputs.nativeQueryResult.rows).avg;
+        var avgResult = _.first(inputs.nativeQueryResult.rows);
+        var avgResultKey = _.first(_.keys(avgResult));
+        var avg = inputs.nativeQueryResult.rows[0][avgResultKey];
         normalizedResult = Number(avg);
         break;
 
       case 'sum':
-        var sum = _.first(inputs.nativeQueryResult.rows).sum;
+        var sumResult = _.first(inputs.nativeQueryResult.rows);
+        var sumResultKey = _.first(_.keys(sumResult));
+        var sum = inputs.nativeQueryResult.rows[0][sumResultKey];
         normalizedResult = Number(sum);
         break;
 
