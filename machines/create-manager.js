@@ -18,6 +18,12 @@ module.exports = {
   '(e.g. a PoolCluster from felixge\'s `mysql` package).',
 
 
+  cacheable: false,
+
+
+  sync: true,
+
+
   inputs: {
 
     connectionString: {

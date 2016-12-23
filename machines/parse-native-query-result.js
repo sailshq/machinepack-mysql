@@ -58,6 +58,7 @@ module.exports = {
 
 
   fn: function parseNativeQueryResult(inputs, exits) {
+    var _ = require('lodash');
     var normalizedResult;
 
     switch (inputs.queryType) {
@@ -81,6 +82,27 @@ module.exports = {
         normalizedResult = {
           numRecordsDeleted: inputs.nativeQueryResult.affectedRows
         };
+        break;
+
+      case 'avg':
+        var avgResult = _.first(inputs.nativeQueryResult.rows);
+        var avgResultKey = _.first(_.keys(avgResult));
+        var avg = inputs.nativeQueryResult.rows[0][avgResultKey];
+        normalizedResult = Number(avg);
+        break;
+
+      case 'sum':
+        var sumResult = _.first(inputs.nativeQueryResult.rows);
+        var sumResultKey = _.first(_.keys(sumResult));
+        var sum = inputs.nativeQueryResult.rows[0][sumResultKey];
+        normalizedResult = Number(sum);
+        break;
+
+      case 'count':
+        var countResult = _.first(inputs.nativeQueryResult.rows);
+        var countResultKey = _.first(_.keys(countResult));
+        var count = inputs.nativeQueryResult.rows[0][countResultKey];
+        normalizedResult = Number(count);
         break;
 
       default:

@@ -1,3 +1,9 @@
+// Build up a SQLBuilder instance when the file is required rather than when the
+// function is run.
+var SQLBuilder = require('waterline-sql-builder')({
+  dialect: 'mysql'
+});
+
 module.exports = {
 
 
@@ -70,33 +76,34 @@ module.exports = {
 
 
   fn: function compileStatement(inputs, exits) {
-    var SQLBuilder = require('waterline-query-builder');
-
-    SQLBuilder.generateSql({
-      dialect: 'mysql',
-      query: inputs.statement
-    }).exec({
-      error: function error(err) {
+    var compiledNativeQuery;
+    try {
+      compiledNativeQuery = SQLBuilder.generate(inputs.statement);
+    } catch (err) {
+      if (!err.code || err.code === 'error') {
         return exits.error(err);
-      },
-      malformed: function malformed(err) {
+      }
+
+      if (err.code === 'malformed') {
         return exits.malformed({
           error: err,
           meta: inputs.meta
         });
-      },
-      notSupported: function notSupported(err) {
+      }
+
+      if (err.code === 'notSupported') {
         return exits.notSupported({
           error: err,
           meta: inputs.meta
         });
-      },
-      success: function success(compiledNativeQuery) {
-        return exits.success({
-          nativeQuery: compiledNativeQuery,
-          meta: inputs.meta
-        });
       }
+
+      return exits.error(err);
+    }
+
+    return exits.success({
+      nativeQuery: compiledNativeQuery,
+      meta: inputs.meta
     });
   }
 
