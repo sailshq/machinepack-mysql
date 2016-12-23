@@ -20,6 +20,7 @@
   "author": "The Treeline Company",
   "license": "MIT",
   "dependencies": {
+    "debug": "2.2.0",
     "lodash": "3.10.1",
     "machine": "12.4.0",
     "mysql": "2.10.2",

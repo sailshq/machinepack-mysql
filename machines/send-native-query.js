@@ -78,6 +78,7 @@ module.exports = {
   fn: function sendNativeQuery(inputs, exits) {
     var util = require('util');
     var _ = require('lodash');
+    var debug = require('debug')('query');
     var validateConnection = require('../helpers/validate-connection');
 
     // Validate provided connection.
@@ -104,6 +105,11 @@ module.exports = {
       return exits.error(new Error('Provided `nativeQuery` is invalid.  Please specify either a string of raw SQL or a dictionary like `{sql: \'SELECT * FROM dogs WHERE name = $1\', bindings: [\'Rover\']}`.'));
     }
 
+
+    debug('Running SQL Query:');
+    debug('SQL: ' + sql);
+    debug('Bindings: ' + bindings);
+    debug('Connection Id: ' + inputs.connection.id);
 
     // Send native query to the database using node-mysql.
     inputs.connection.query({
