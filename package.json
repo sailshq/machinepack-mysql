@@ -1,6 +1,6 @@
 {
   "name": "machinepack-mysql",
-  "version": "1.0.0",
+  "version": "1.0.0-1",
   "description": "Structured Node.js bindings for MySQL.",
   "scripts": {
     "test": "node ./node_modules/mocha/bin/mocha --recursive",
@@ -22,9 +22,9 @@
   "dependencies": {
     "debug": "2.2.0",
     "lodash": "3.10.1",
-    "machine": "12.4.0",
+    "machine": "^13.0.0-17",
     "mysql": "2.10.2",
-    "waterline-query-builder": "treelinehq/waterline-query-builder"
+    "waterline-sql-builder": "^1.0.0-1"
   },
   "devDependencies": {
     "eslint": "3.5.0",
