@@ -39,7 +39,7 @@ module.exports = {
       whereToGet: {
         url: 'https://gist.github.com/mikermcneil/46d10fd816c980cd3d9f'
       },
-      example: '==='
+      example: '===',
       // example: 'mysql://mikermcneil:p4ssw02D@localhost:3306/some_db',
       required: true
     },
