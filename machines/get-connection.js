@@ -39,10 +39,11 @@ module.exports = {
       extendedDescription: 'This connection should be eventually released.  Otherwise, it may time out.  It is not a good idea to rely on database connections timing out-- be sure to release this connection when finished with it!',
       outputVariableName: 'report',
       outputDescription: 'The `connection` property is an active connection to the database.  The `meta` property is reserved for custom driver-specific extensions.',
-      example: {
-        connection: '===',
-        meta: '==='
-      }
+      example: '==='
+      // example: {
+      //   connection: '===',
+      //   meta: '==='
+      // }
     },
 
     failed: {
@@ -56,10 +57,11 @@ module.exports = {
       ' + any other miscellaneous connection error',
       outputVariableName: 'report',
       outputDescription: 'The `error` property is a JavaScript Error instance explaining that a connection could not be made.  The `meta` property is reserved for custom driver-specific extensions.',
-      example: {
-        error: '===',
-        meta: '==='
-      }
+      example: '==='
+      // example: {
+      //   error: '===',
+      //   meta: '==='
+      // }
     }
 
   },
