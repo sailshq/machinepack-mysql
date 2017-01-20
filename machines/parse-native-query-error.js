@@ -1,3 +1,6 @@
+// Dependencies
+var _ = require('lodash');
+
 module.exports = {
 
 
@@ -53,8 +56,6 @@ module.exports = {
 
 
   fn: function parseNativeQueryError(inputs, exits) {
-    var _ = require('lodash');
-
     // Quick reference of hand-tested errors:
 
     // --o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o--o-<>

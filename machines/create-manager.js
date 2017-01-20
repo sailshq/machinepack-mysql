@@ -1,3 +1,9 @@
+// Dependencies
+var util = require('util');
+var Url = require('url');
+var _ = require('lodash');
+var felix = require('mysql');
+
 module.exports = {
 
 
@@ -124,12 +130,6 @@ module.exports = {
 
 
   fn: function createManager(inputs, exits) {
-    var util = require('util');
-    var Url = require('url');
-    var _ = require('lodash');
-    var felix = require('mysql');
-
-
     // Note:
     // Support for different types of managers is database-specific, and is not
     // built into the Waterline driver spec-- however this type of configurability
