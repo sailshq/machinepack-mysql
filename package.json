@@ -24,7 +24,7 @@
     "lodash": "3.10.1",
     "machine": "^13.0.0-17",
     "mysql": "2.10.2",
-    "waterline-sql-builder": "^1.0.0-1"
+    "waterline-sql-builder": "^1.0.0-2"
   },
   "devDependencies": {
     "eslint": "3.5.0",
