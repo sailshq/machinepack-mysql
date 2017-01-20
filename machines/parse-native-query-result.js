@@ -1,3 +1,6 @@
+// Dependencies
+var _ = require('lodash');
+
 module.exports = {
 
 
@@ -22,7 +25,8 @@ module.exports = {
         'Either "select", "insert", "destroy", "update", "count", "sum", or "avg".  ' +
         'This determines how the provided raw result will be parsed/coerced.',
       required: true,
-      example: 'select'
+      example: '==='
+      // example: 'select'
     },
 
     nativeQueryResult: {
@@ -48,17 +52,17 @@ module.exports = {
       description: 'The result was successfully normalized.',
       outputVariableName: 'report',
       outputDescription: 'The `result` property is the normalized version of the raw result originally provided.   The `meta` property is reserved for custom driver-specific extensions.',
-      example: {
-        result: '*',
-        meta: '==='
-      }
+      example: '==='
+      // example: {
+      //   result: '*',
+      //   meta: '==='
+      // }
     },
 
   },
 
 
   fn: function parseNativeQueryResult(inputs, exits) {
-    var _ = require('lodash');
     var normalizedResult;
 
     switch (inputs.queryType) {
