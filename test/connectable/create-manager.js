@@ -3,7 +3,6 @@ var Pack = require('../../');
 
 describe('Connectable ::', function() {
   describe('Create Manager', function() {
-
     it('should work without a protocol in the connection string', function(done) {
       Pack.createManager({
         connectionString: 'localhost:5432/mppg'
