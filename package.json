@@ -1,6 +1,6 @@
 {
   "name": "machinepack-mysql",
-  "version": "2.0.0-2",
+  "version": "2.0.0-3",
   "description": "Structured Node.js bindings for MySQL.",
   "scripts": {
     "test": "node ./node_modules/mocha/bin/mocha --recursive",
@@ -28,7 +28,6 @@
   },
   "devDependencies": {
     "eslint": "3.5.0",
-    "espree": "3.3.0",
     "mocha": "3.0.2"
   },
   "machinepack": {
