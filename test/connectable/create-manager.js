@@ -3,14 +3,14 @@ var Pack = require('../../');
 
 describe('Connectable ::', function() {
   describe('Create Manager', function() {
-    it('should validate the connection string has a protocol', function(done) {
+    it('should work without a protocol in the connection string', function(done) {
       Pack.createManager({
         connectionString: 'localhost:5432/mppg'
       })
       .exec(function(err) {
-        assert(err);
-        assert.equal(err.exit, 'malformed');
-
+        if (err) {
+          return done(err);
+        }
         return done();
       });
     });
