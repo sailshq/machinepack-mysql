@@ -48,7 +48,8 @@ module.exports = {
       outputDescription: 'The `nativeQuery` property is the compiled native query for the database.  The `meta` property is reserved for custom driver-specific extensions.',
       example: '==='
       // example: {
-      //   nativeQuery: '*',
+      //   nativeQuery: 'SELECT * FROM foo',
+      //   valuesToEscape: ['foo']
       //   meta: '==='
       // }
     },
@@ -105,9 +106,16 @@ module.exports = {
       return exits.error(err);
     }
 
+
+    // Attach a flag to the meta object to denote that the query was generated
+    // with Knex and that it's valuesToEscape don't need to be processed any further.
+    var meta = inputs.meta || {};
+    meta.isUsingQuestionMarks = true;
+
     return exits.success({
-      nativeQuery: compiledNativeQuery,
-      meta: inputs.meta
+      nativeQuery: compiledNativeQuery.sql,
+      valuesToEscape: compiledNativeQuery.bindings || [],
+      meta: meta
     });
   }
 
