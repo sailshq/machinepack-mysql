@@ -15,7 +15,7 @@ describe('Queryable ::', function() {
           return done(err);
         }
 
-        assert.equal(report.nativeQuery.sql, 'select `title`, `author`, `year` from `books`');
+        assert.equal(report.nativeQuery, 'select `title`, `author`, `year` from `books`');
         return done();
       });
     });
