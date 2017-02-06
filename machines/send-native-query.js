@@ -120,14 +120,17 @@ module.exports = {
     // Process SQL template, escaping bindings.
     // This converts `$1`, `$2`, etc. into the escaped binding.
     sql = sql.replace(/\$[1-9][0-9]*/g, function (substr){
+
       // e.g. `'$3'` => `'3'` => `3` => `2`
       var idx = +( substr.slice(1) ) - 1;
+      // console.log('idx:',idx);
 
       // If no such binding exists, then just leave the original
       // template string (e.g. "$3") alone.
       if (idx >= bindings.length) {
         return substr;
       }
+      // console.log('bindings[idx]:',bindings[idx]);
 
       // But otherwise, replace it with the escaped binding.
       return inputs.connection.escape(bindings[idx]);
