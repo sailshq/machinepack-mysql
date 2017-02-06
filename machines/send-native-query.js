@@ -23,15 +23,21 @@ module.exports = {
     },
 
     nativeQuery: {
-      description: 'A SQL statement as a string (or to use built-in escaping, this should be provided as a dictionary).',
-      extendedDescription: 'If provided as a dictionary, this should contain `sql` (the SQL statement string; e.g. \'SELECT * FROM dogs WHERE name = ?\') as well as an array of `bindings` (e.g. [\'David\']).',
-      moreInfoUrl: 'https://github.com/felixge/node-mysql#performing-queries',
+      description: 'A native query for the database.',
+      extendedDescription: 'If `valuesToEscape` is provided, this supports template syntax like `$1`, `$2`, etc.',
       whereToGet: {
-        description: 'This is oftentimes compiled from Waterline query syntax using "Compile statement", however it could also originate from userland code.',
+        description: 'Write a native query for this database, or if this driver supports it, use `compileStatement()` to build a native query from Waterline syntax.',
+        extendedDescription: 'This might be compiled from a Waterline statement (stage 4 query) using "Compile statement", however it could also originate directly from userland code.'
       },
-      example: '===',
-      // example: '*',
+      example: 'SELECT * FROM pets WHERE species=$1 AND nickname=$2',
       required: true
+    },
+
+    valuesToEscape: {
+      description: 'An optional list of strings, numbers, or special literals (true, false, or null) to escape and include in the native query, in order.',
+      extendedDescription: 'Note that numbers, `true`, `false`, and `null` are all interpreted exactly the same way as if they were wrapped in quotes.  This array must never contain any arrays or dictionaries.  The first value in the list will be used to replace `$1`, the second value to replace `$2`, and so on.',
+      example: '===',
+      defaultsTo: []
     },
 
     meta: {
@@ -95,21 +101,9 @@ module.exports = {
     }
 
 
-    // Validate query
-    // (supports raw SQL string or dictionary consisting of `sql` and `bindings` properties)
-    var sql;
-    var bindings = [];
-
-    if (_.isString(inputs.nativeQuery)) {
-      sql = inputs.nativeQuery;
-    } else if (_.isObject(inputs.nativeQuery) && _.isString(inputs.nativeQuery.sql)) {
-      sql = inputs.nativeQuery.sql;
-      if (_.isArray(inputs.nativeQuery.bindings)) {
-        bindings = inputs.nativeQuery.bindings;
-      }
-    } else {
-      return exits.error(new Error('Provided `nativeQuery` is invalid.  Please specify either a string of raw SQL or a dictionary like `{sql: \'SELECT * FROM dogs WHERE name = $1\', bindings: [\'Rover\']}`.'));
-    }
+    // Validate provided native query.
+    var sql = inputs.nativeQuery;
+    var bindings = inputs.valuesToEscape || [];
 
 
     debug('Running SQL Query:');
