@@ -117,11 +117,27 @@ module.exports = {
     debug('Bindings: ' + bindings);
     debug('Connection Id: ' + inputs.connection.id);
 
+    // Process SQL template, escaping bindings.
+    // This converts `$1`, `$2`, etc. into the escaped binding.
+    sql = sql.replace(/\$[1-9][0-9]*/g, function (substr){
+
+      // e.g. `'$3'` => `'3'` => `3` => `2`
+      var idx = +( substr.slice(1) ) - 1;
+
+      // If no such binding exists, then just leave the original
+      // template string (e.g. "$3") alone.
+      if (idx >= bindings.length) {
+        return substr;
+      }
+
+      // But otherwise, replace it with the escaped binding.
+      return inputs.connection.escape(bindings[idx]);
+    });
+
+    debug('Compiled (final) SQL: ' + sql);
+
     // Send native query to the database using node-mysql.
-    inputs.connection.query({
-      sql: sql,
-      values: bindings
-    }, function query() {
+    inputs.connection.query(sql, function query() {
       // The exact format of the arguments for this callback are not part of
       // the officially documented behavior of node-mysql (at least not as
       // of March 2016 when this comment is being written).
