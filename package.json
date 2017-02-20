@@ -6,7 +6,7 @@
     "test": "node ./node_modules/mocha/bin/mocha --recursive",
     "fasttest": "node ./node_modules/mocha/bin/mocha --recursive",
     "pretest": "npm run lint",
-    "lint": "eslint machines test",
+    "lint": "node ./node_modules/eslint/bin/eslint *.js **/*.js",
     "docker": "docker-compose run adapter bash"
   },
   "keywords": [
@@ -17,11 +17,11 @@
     "machines",
     "machinepack"
   ],
-  "author": "The Treeline Company",
+  "author": "The Sails Company",
   "license": "MIT",
   "dependencies": {
     "debug": "2.2.0",
-    "lodash": "3.10.1",
+    "@sailshq/lodash": "^3.10.2",
     "machine": "^13.0.0-17",
     "mysql": "2.10.2",
     "waterline-sql-builder": "^1.0.0-2"

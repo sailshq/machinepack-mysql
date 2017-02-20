@@ -38,7 +38,7 @@ module.exports = require('machine').build({
 
 
   fn: function validateConnection(inputs, exits) {
-    var _ = require('lodash');
+    var _ = require('@sailshq/lodash');
 
     // Validate some basic assertions about the provided connection.
     // (this doesn't guarantee it's still active or anything, but it does let

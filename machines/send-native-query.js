@@ -1,6 +1,6 @@
 // Dependencies
 var util = require('util');
-var _ = require('lodash');
+var _ = require('@sailshq/lodash');
 var debug = require('debug')('query');
 
 module.exports = {
