@@ -29,9 +29,9 @@ module.exports = require('machine').build({
   exits: {
 
     success: {
-      outputVariableName: 'isProbablyMySQLConnection',
+      outputFriendlyName: 'Is probably MySQL connection',
       outputDescription: 'If the provided appears to be a valid MySQL connection instance.',
-      example: true
+      outputExample: true
     },
 
   },
