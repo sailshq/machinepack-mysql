@@ -29,16 +29,16 @@ module.exports = require('machine').build({
   exits: {
 
     success: {
-      outputVariableName: 'isProbablyMySQLConnection',
+      outputFriendlyName: 'Is probably MySQL connection',
       outputDescription: 'If the provided appears to be a valid MySQL connection instance.',
-      example: true
+      outputExample: true
     },
 
   },
 
 
   fn: function validateConnection(inputs, exits) {
-    var _ = require('lodash');
+    var _ = require('@sailshq/lodash');
 
     // Validate some basic assertions about the provided connection.
     // (this doesn't guarantee it's still active or anything, but it does let

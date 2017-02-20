@@ -1,7 +1,7 @@
 // Dependencies
 var util = require('util');
 var Url = require('url');
-var _ = require('lodash');
+var _ = require('@sailshq/lodash');
 var felix = require('mysql');
 
 module.exports = {

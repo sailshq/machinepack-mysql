@@ -1,5 +1,5 @@
 // Dependencies
-var _ = require('lodash');
+var _ = require('@sailshq/lodash');
 
 module.exports = {
 
