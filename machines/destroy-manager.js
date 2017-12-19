@@ -33,7 +33,7 @@ module.exports = {
       description: 'The specified manager and all of its active connections were successfully destroyed.',
       outputVariableName: 'report',
       outputDescription: 'The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
+      outputExample: '==='
       // example: {
       //   meta: '==='
       // }
@@ -48,7 +48,7 @@ module.exports = {
         'server(s) became overwhelemed or were shut off while some business logic was in progress.',
       outputVariableName: 'report',
       outputDescription: 'The `error` property is a JavaScript Error instance with more information and a stack trace.  The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
+      outputExample: '==='
       // example: {
       //   error: '===',
       //   meta: '==='

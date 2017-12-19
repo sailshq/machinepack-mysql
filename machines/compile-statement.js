@@ -13,7 +13,7 @@ module.exports = {
   description: 'Compile a Waterline statement to a native query for MySQL.',
 
 
-  cacheable: true,
+  sideEffects: 'cacheable',
 
 
   sync: true,
@@ -46,7 +46,7 @@ module.exports = {
       description: 'The provided Waterline statement was compiled successfully.',
       outputVariableName: 'report',
       outputDescription: 'The `nativeQuery` property is the compiled native query for the database.  The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
+      outputExample: '==='
       // example: {
       //   nativeQuery: 'SELECT * FROM foo',
       //   valuesToEscape: ['foo']
@@ -58,7 +58,7 @@ module.exports = {
       description: 'The provided Waterline statement could not be compiled due to malformed syntax.',
       outputVariableName: 'report',
       outputDescription: 'The `error` property is a JavaScript error instance explaining that (or preferably even _why_) the Waterline syntax is not valid.  The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
+      outputExample: '==='
       // example: {
       //   error: '===',
       //   meta: '==='
@@ -70,7 +70,7 @@ module.exports = {
       extendedDescription: 'If even one clause of the Waterline statement is not supported by the MySQL driver, the compilation of the entire statement _always fails_.',
       outputVariableName: 'report',
       outputDescription: 'The `error` property is a JavaScript error instance explaining that (or preferably even _why_) the Waterline statement is not supported.  The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
+      outputExample: '==='
       // example: {
       //   error: '===',
       //   meta: '==='

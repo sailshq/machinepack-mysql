@@ -13,7 +13,7 @@ module.exports = {
   moreInfoUrl: 'https://github.com/node-machine/waterline-driver-interface#footprints',
 
 
-  cacheable: true,
+  sideEffects: 'cacheable',
 
 
   sync: true,
@@ -45,7 +45,7 @@ module.exports = {
       moreInfoUrl: 'https://github.com/node-machine/waterline-driver-interface#footprints',
       outputVariableName: 'report',
       outputDescription: 'The `footprint` property is the normalized "footprint" representing the provided raw error.  Conforms to one of a handful of standardized footprint types expected by the Waterline driver interface.   The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
+      outputExample: '==='
       // example: {
       //   footprint: {},
       //   meta: '==='
