@@ -66,7 +66,7 @@ module.exports = {
     Pack.sendNativeQuery({
       connection: inputs.connection,
       nativeQuery: 'BEGIN'
-    }).exec({
+    }).switch({
       error: function error(err) {
         return exits.error(err);
       },
