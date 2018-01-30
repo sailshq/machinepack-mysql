@@ -6,7 +6,7 @@
     "test": "node ./node_modules/mocha/bin/mocha --recursive",
     "fasttest": "node ./node_modules/mocha/bin/mocha --recursive",
     "pretest": "npm run lint",
-    "lint": "node ./node_modules/eslint/bin/eslint *.js **/*.js",
+    "lint": "node ./node_modules/eslint/bin/eslint . --max-warnings=0 --ignore-pattern 'test/'",
     "docker": "docker-compose run adapter bash"
   },
   "keywords": [
@@ -27,7 +27,7 @@
     "waterline-sql-builder": "^1.0.0-2"
   },
   "devDependencies": {
-    "eslint": "3.5.0",
+    "eslint": "4.11.0",
     "mocha": "3.0.2"
   },
   "machinepack": {
