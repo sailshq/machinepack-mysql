@@ -10,7 +10,7 @@ module.exports = {
   description: 'Parse a raw result from a native query and normalize it for the specified query type.',
 
 
-  cacheable: true,
+  sideEffects: 'cacheable',
 
 
   sync: true,
@@ -52,7 +52,7 @@ module.exports = {
       description: 'The result was successfully normalized.',
       outputVariableName: 'report',
       outputDescription: 'The `result` property is the normalized version of the raw result originally provided.   The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
+      outputExample: '==='
       // example: {
       //   result: '*',
       //   meta: '==='

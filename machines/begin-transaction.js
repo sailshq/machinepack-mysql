@@ -37,8 +37,8 @@ module.exports = {
       extendedDescription: 'Until it is committed, rolled back, or times out, subsequent queries run on this connection will be transactional.  They will not have any true effect on the database until the transaction is committed, and will not affect queries made on other connections.',
       outputVariableName: 'report',
       outputDescription: 'The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
-      // example: {
+      outputExample: '==='
+      // outputExample: {
       //   meta: '==='
       // }
     },
@@ -49,8 +49,8 @@ module.exports = {
       extendedDescription: 'Usually, this means the connection to the database was lost due to a logic error or timing issue in userland code.  In production, this can mean that the database became overwhelemed or was shut off while some business logic was in progress.',
       outputVariableName: 'report',
       outputDescription: 'The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
-      // example: {
+      outputExample: '==='
+      // outputExample: {
       //   meta: '==='
       // }
     }
@@ -66,7 +66,7 @@ module.exports = {
     Pack.sendNativeQuery({
       connection: inputs.connection,
       nativeQuery: 'BEGIN'
-    }).exec({
+    }).switch({
       error: function error(err) {
         return exits.error(err);
       },

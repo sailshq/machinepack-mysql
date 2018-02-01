@@ -7,7 +7,7 @@ module.exports = require('machine').build({
   description: 'Check if this looks like a valid MySQL connection instance.',
 
 
-  cacheable: true,
+  sideEffects: 'cacheable',
 
 
   sync: true,

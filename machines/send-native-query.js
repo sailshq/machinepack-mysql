@@ -57,8 +57,8 @@ module.exports = {
       outputVariableName: 'report',
       outputDescription: 'The `result` property is the result data the database sent back.  The `meta` property is reserved for custom driver-specific extensions.',
       moreInfoUrl: 'https://github.com/felixge/node-mysql#getting-the-id-of-an-inserted-row',
-      example: '==='
-      // example: {
+      outputExample: '==='
+      // outputExample: {
       //   result: '===',
       //   meta: '==='
       // }
@@ -68,8 +68,8 @@ module.exports = {
       description: 'The database returned an error when attempting to execute the native query.',
       outputVariableName: 'report',
       outputDescription: 'The `error` property is a JavaScript Error instance with more details about what went wrong.  The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
-      // example: {
+      outputExample: '==='
+      // outputExample: {
       //   error: '===',
       //   meta: '==='
       // }
@@ -81,8 +81,8 @@ module.exports = {
       extendedDescription: 'Usually, this means the connection to the database was lost due to a logic error or timing issue in userland code.  In production, this can mean that the database became overwhelemed or was shut off while some business logic was in progress.',
       outputVariableName: 'report',
       outputDescription: 'The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
-      // example: {
+      outputExample: '==='
+      // outputExample: {
       //   meta: '==='
       // }
     }

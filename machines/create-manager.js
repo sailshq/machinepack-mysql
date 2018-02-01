@@ -24,9 +24,6 @@ module.exports = {
   '(e.g. a PoolCluster from felixge\'s `mysql` package).',
 
 
-  cacheable: false,
-
-
   sync: true,
 
 
@@ -82,7 +79,7 @@ module.exports = {
         'basis; and it may also vary based on the configuration passed into the `meta` input.',
       outputVariableName: 'report',
       outputDescription: 'The `manager` property is a manager instance that will be passed into `getConnection()`. The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
+      outputExample: '==='
       // example: {
       //   manager: '===',
       //   meta: '==='
@@ -93,7 +90,7 @@ module.exports = {
       description: 'The provided connection string is not valid for MySQL.',
       outputVariableName: 'report',
       outputDescription: 'The `error` property is a JavaScript Error instance explaining that (and preferably "why") the provided connection string is invalid.  The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
+      outputExample: '==='
       // example: {
       //   error: '===',
       //   meta: '==='
@@ -119,8 +116,8 @@ module.exports = {
         'any errors related to bad credentials, connectivity, etc. will not be caught until `getConnection()` is called.',
       outputVariableName: 'report',
       outputDescription: 'The `error` property is a JavaScript Error instance with more information and a stack trace.  The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
-      // example: {
+      outputExample: '==='
+      // outputExample: {
       //   error: '===',
       //   meta: '==='
       // }

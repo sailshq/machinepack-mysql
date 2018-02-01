@@ -40,8 +40,8 @@ module.exports = {
       extendedDescription: 'Subsequent queries on this connection will no longer be transactional unless a new transaction is begun.',
       outputVariableName: 'report',
       outputDescription: 'The `meta` property is reserved for custom driver-specific extensions.',
-      example: '==='
-      // example: {
+      outputExample: '==='
+      // outputExample: {
       //   meta: '==='
       // }
     },
@@ -50,8 +50,8 @@ module.exports = {
       friendlyName: 'Meta (custom)',
       description: 'Additional stuff to pass to the driver.',
       extendedDescription: 'This is reserved for custom driver-specific extensions.  Please refer to the documentation for the driver you are using for more specific information.',
-      example: '==='
-      // example: {
+      outputExample: '==='
+      // outputExample: {
       //   meta: '==='
       // }
     }
@@ -67,7 +67,7 @@ module.exports = {
     Pack.sendNativeQuery({
       connection: inputs.connection,
       nativeQuery: 'ROLLBACK'
-    }).exec({
+    }).switch({
       error: function error(err) {
         return exits.error(err);
       },
