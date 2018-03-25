@@ -20,7 +20,7 @@
   "author": "The Sails Company",
   "license": "MIT",
   "dependencies": {
-    "debug": "^2.6.9",
+    "debug": "2.6.9",
     "@sailshq/lodash": "^3.10.2",
     "machine": "^15.0.0-21",
     "mysql": "2.10.2",
