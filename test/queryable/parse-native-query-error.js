@@ -78,7 +78,7 @@ describe('Queryable ::', function() {
         assert.equal(err.exit, 'queryFailed');
 
         Pack.parseNativeQueryError({
-          nativeQueryError: err.output.error
+          nativeQueryError: err.raw
         })
         .exec(function(err, report) {
           if (err) {
