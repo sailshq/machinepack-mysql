@@ -5,7 +5,7 @@ describe('Connectable ::', function() {
   describe('Create Manager', function() {
     it('should work without a protocol in the connection string', function(done) {
       Pack.createManager({
-        connectionString: 'localhost:5432/mppg'
+        connectionString: 'localhost:3306/mppg'
       })
       .exec(function(err) {
         if (err) {
@@ -17,7 +17,7 @@ describe('Connectable ::', function() {
 
     it('should successfully return a Pool', function(done) {
       Pack.createManager({
-        connectionString: 'mysql://mp:mp@localhost:5432/mppg'
+        connectionString: 'mysql://mp:mp@localhost:3306/mppg'
       })
       .exec(function(err, report) {
         if (err) {
