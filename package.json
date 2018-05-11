@@ -6,7 +6,7 @@
     "test": "node ./node_modules/mocha/bin/mocha --recursive",
     "fasttest": "node ./node_modules/mocha/bin/mocha --recursive",
     "pretest": "npm run lint",
-    "lint": "node ./node_modules/eslint/bin/eslint . --max-warnings=0 --ignore-pattern 'test/'",
+    "lint": "node ./node_modules/eslint/bin/eslint . --max-warnings=0",
     "docker": "docker-compose run adapter bash"
   },
   "keywords": [
