@@ -17,7 +17,7 @@
     "machines",
     "machinepack"
   ],
-  "author": "The Sails Company",
+  "author": "Mike McNeil",
   "license": "MIT",
   "dependencies": {
     "debug": "2.6.9",
