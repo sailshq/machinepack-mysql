@@ -32,7 +32,7 @@
   },
   "machinepack": {
     "friendlyName": "MySQL",
-    "machineDir": "machines/",
+    "machineDir": "lib/",
     "machines": [
       "get-connection",
       "release-connection",
