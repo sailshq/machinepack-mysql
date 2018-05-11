@@ -20,7 +20,7 @@ describe('Queryable ::', function() {
       });
     });
 
-    // TODO: Add lots of checking to the statement compiler
+    // FUTURE: Add lots of checking to the statement compiler
     it.skip('should return the malformed exit for bad WLQL', function(done) {
       Pack.compileStatement({
         statement: {
@@ -29,8 +29,11 @@ describe('Queryable ::', function() {
         }
       })
       .exec(function(err) {
-        assert(err);
-        assert.equal(err.exit, 'malformed');
+        try {
+          assert(err);
+          assert.equal(err.exit, 'malformed', 'Instead got '+err.stack);
+        } catch (err2) { return done(err2); }
+
         return done();
       });
     });
