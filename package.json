@@ -3,7 +3,7 @@
   "version": "3.0.3",
   "description": "Structured Node.js bindings for MySQL.",
   "scripts": {
-    "test": "node ./node_modules/mocha/bin/mocha --recursive",
+    "test": "node ./node_modules/mocha/bin/mocha --timeout 4000 --recursive",
     "fasttest": "node ./node_modules/mocha/bin/mocha --recursive",
     "pretest": "npm run lint",
     "lint": "node ./node_modules/eslint/bin/eslint . --max-warnings=0",
