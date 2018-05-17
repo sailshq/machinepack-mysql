@@ -8,7 +8,7 @@ Structured Node.js bindings for MySQL.
 > See https://github.com/node-machine/driver-interface for more background information about this package.
 
 
-## Installation &nbsp; [![NPM version](https://badge.fury.io/js/machinepack-mysql.svg)](http://badge.fury.io/js/machinepack-mysql) [![Build Status](https://travis-ci.org/treelinehq/machinepack-mysql.png?branch=master)](https://travis-ci.org/treelinehq/machinepack-mysql)
+## Installation &nbsp; [![NPM version](https://badge.fury.io/js/machinepack-mysql.svg)](http://badge.fury.io/js/machinepack-mysql) [![Build Status](https://travis-ci.org/sailshq/machinepack-mysql.png?branch=master)](https://travis-ci.org/sailshq/machinepack-mysql)
 
 ```sh
 $ npm install machinepack-mysql
@@ -30,7 +30,7 @@ For more examples, or if you get stuck or have questions, click [here](http://sa
 To report a bug, [click here](http://sailsjs.com/bugs).
 
 
-## Contributing &nbsp; [![Build Status](https://travis-ci.org/balderdashy/machinepack-mysql.svg?branch=master)](https://travis-ci.org/balderdashy/machinepack-mysql)
+## Contributing &nbsp; [![Build Status](https://travis-ci.org/sailshq/machinepack-mysql.svg?branch=master)](https://travis-ci.org/sailshq/machinepack-mysql)
 
 Please observe the guidelines and conventions laid out in the [Sails project contribution guide](http://sailsjs.com/contribute) when opening issues or submitting pull requests.
 
@@ -42,7 +42,7 @@ Thanks to [felixge](https://github.com/felixge) and [dougwilson](https://github.
 
 ## License
 
-MIT &copy; 2015-2017 The Sails Company
+MIT &copy; 2015-present Mike McNeil
 
 This package, like the [Sails framework](http://sailsjs.com), is free and open-source under the [MIT License](http://sailsjs.com/license).
 
