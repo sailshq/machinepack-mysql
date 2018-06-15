@@ -20,10 +20,10 @@
   "author": "Mike McNeil",
   "license": "MIT",
   "dependencies": {
-    "debug": "2.6.9",
     "@sailshq/lodash": "^3.10.2",
+    "debug": "2.6.9",
     "machine": "^15.0.0",
-    "mysql": "2.10.2",
+    "mysql": "^2.15.0",
     "waterline-sql-builder": "^1.0.0-2"
   },
   "devDependencies": {
