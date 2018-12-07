@@ -23,7 +23,7 @@
     "debug": "2.6.9",
     "@sailshq/lodash": "^3.10.2",
     "machine": "^15.0.0",
-    "mysql": "2.15.0",
+    "mysql": "2.16.0",
     "waterline-sql-builder": "^1.0.0-2"
   },
   "devDependencies": {
