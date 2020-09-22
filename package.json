@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "debug": "2.6.9",
-    "@sailshq/lodash": "^3.10.2",
+    "@sailshq/lodash": "^3.10.4",
     "machine": "^15.0.0",
     "mysql": "^2.18.0",
     "waterline-sql-builder": "^1.0.0-2"
