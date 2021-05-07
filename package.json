@@ -1,6 +1,6 @@
 {
-  "name": "machinepack-mysql",
-  "version": "3.1.0-0",
+  "name": "@bubbltrubl/machinepack-mysql",
+  "version": "3.1.1",
   "description": "Structured Node.js bindings for MySQL.",
   "scripts": {
     "test": "node ./node_modules/mocha/bin/mocha --recursive --timeout 10000",
@@ -51,9 +51,5 @@
       "queryable": "1.0",
       "transactional": "1.0"
     }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:treelinehq/machinepack-mysql.git"
   }
 }
