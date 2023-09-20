@@ -9,4 +9,4 @@ module.exports = require('machine').pack({
 //... well except for this.
 // Also give the driver a `mysql` property, so that it provides access
 // to the `mysql` library for Node.js. (See http://npmjs.com/package/mysql)
-module.exports.mysql = require('mysql');
+module.exports.mysql = require('mysql2');
